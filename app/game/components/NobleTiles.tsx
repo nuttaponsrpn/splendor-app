@@ -10,16 +10,9 @@ interface NobleTilesProps {
 }
 
 const NobleTiles: FC<NobleTilesProps> = ({ nobleTiles }) => {
+  nobleTiles = nobleTiles.slice(0, 2);
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flex: "0 0 130px",
-        borderRadius: "8px",
-        gap: "26px",
-      }}
-    >
+    <NobleTilesContainer>
       {nobleTiles.map((tile, index) => (
         <NobleTilesBox key={index}>
           <Typography variant="body1">Noble {index + 1}</Typography>
@@ -38,14 +31,23 @@ const NobleTiles: FC<NobleTilesProps> = ({ nobleTiles }) => {
           </NobleCostWrapper>
         </NobleTilesBox>
       ))}
-    </Box>
+    </NobleTilesContainer>
   );
 };
 
 export default NobleTiles;
 
+const NobleTilesContainer = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: 8px;
+  flex: 1;
+`;
+
 const NobleTilesBox = styled(Box)`
   flex: 0 0 30%;
+  width: 100%;
   text-align: center;
   border: 1px solid #bbb;
   border-radius: 8px;

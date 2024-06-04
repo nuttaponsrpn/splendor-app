@@ -46,13 +46,15 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
   }
 
   return (
-    <PlayerBoardBox sx={{}}>
+    <PlayerBoardBox>
       <Stack
         direction="row"
         spacing={2}
         alignItems="center"
         justifyContent="center"
         gap="20px"
+        width="80%"
+        height="100%"
       >
         {Object.keys(player.gems).map((gem, index) => (
           <PlayerDevelopmentBox key={`${gem}${index}`}>
@@ -60,8 +62,8 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
               {getPlayerGemCardAmount(gem as GemType, player)}
             </PurchaseAmount>
             <BlankCard
-              width="60px"
-              height="72px"
+              width="100%"
+              height="100%"
               bgcolor={displayBgColor(gem as GemType)}
             />
             <TokenWrapper>
@@ -137,6 +139,9 @@ const PlayerBoardBox = styled(Box)`
   flex: 1;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const TokenWrapper = styled(Box)`
@@ -148,6 +153,8 @@ const TokenWrapper = styled(Box)`
 const PlayerDevelopmentBox = styled(Box)`
   display: flex;
   position: relative;
+  flex: 1;
+  height: 100%;
 `;
 
 const TokenAmount = styled(Box)`

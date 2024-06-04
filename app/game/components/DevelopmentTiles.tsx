@@ -139,27 +139,29 @@ export default DevelopmentTiles;
 
 const DevelopmentCardsContainer = styled(Box)`
   display: flex;
-  align-items: flex-end;
   flex-direction: column;
-  flex: 1;
   border-radius: 8px;
   gap: 8px;
+  height: 100%;
+  width: 55%;
 `;
 
 const CardLevelBox = styled(Box)`
   display: flex;
   flex-direction: row;
   gap: 12px;
+  height: 33%;
+  width: 100%;
 `;
 
 const DevelopmentCardWrapper = styled(Box)`
-  height: 165px;
-  width: 130px;
+  height: 100%;
+  flex: 1;
 `;
 
 const DevelopmentLevelWrapper = styled(Box)`
-  height: 165px;
-  width: 100px;
+  height: 100%;
+  width: 12%;
 `;
 
 const DevelopmentCardDialog = styled(Box)`

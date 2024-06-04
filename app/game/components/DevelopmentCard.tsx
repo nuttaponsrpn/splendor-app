@@ -1,4 +1,4 @@
-import { Box, styled, Typography } from "@mui/material";
+import { Box, Card, styled, Typography } from "@mui/material";
 import { FC } from "react";
 import { GemType, Token } from "./GemTokens";
 
@@ -23,9 +23,9 @@ interface Gem {
 }
 
 const levelBgColor: LevelBgColor = {
-  1: "#bfe7bf",
-  2: "#fbfbc4",
-  3: "#c8d6f5",
+  1: "#c2e7b8",
+  2: "#ffffe4",
+  3: "#bdcef3",
 };
 
 interface DevelopmentCardProps {
@@ -39,8 +39,8 @@ const DevelopmentCards: FC<DevelopmentCardProps> = ({ developmentCard }) => {
       bgcolor={levelBgColor[developmentCard.level as DevelopmentLevel]}
     >
       <DevelopmentCardHeader>
-        <Typography variant="h5">{developmentCard.points}</Typography>
-        <Token gem={developmentCard.gemType}></Token>
+        <CardPoints variant="h5">{developmentCard.points}</CardPoints>
+        <Token gem={developmentCard.gemType} size="2.3vw"></Token>
       </DevelopmentCardHeader>
       <DevelopmentCardFooter>
         {Object.keys(developmentCard.cost)
@@ -49,7 +49,7 @@ const DevelopmentCards: FC<DevelopmentCardProps> = ({ developmentCard }) => {
             <div key={`${key}${i}`}>
               <Token
                 gem={key as GemType}
-                size="30px"
+                size="2vw"
                 value={developmentCard.cost[key as GemType].toString()}
               ></Token>
             </div>
@@ -61,16 +61,19 @@ const DevelopmentCards: FC<DevelopmentCardProps> = ({ developmentCard }) => {
 
 export default DevelopmentCards;
 
-const DevelopmentCardBox = styled(Box)`
+const DevelopmentCardBox = styled(Card)<{ bgcolor: string }>`
   text-align: center;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  padding: 6px 8px;
+  background-color: ${({ bgcolor }) => (bgcolor ? bgcolor : "inherit")};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 100%;
+  border: 5px solid #ffe853c9; /* Thickness and color of the border */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Shadow with gradient effect */
+  cursor: pointer;
 `;
 
 const DevelopmentCardHeader = styled(Box)`
@@ -83,4 +86,14 @@ const DevelopmentCardFooter = styled(Box)`
   display: flex;
   flex-wrap: wrap-reverse;
   gap: 6px;
+`;
+
+const CardPoints = styled(Typography)`
+  color: #fff;
+  text-shadow: 0 0 0 rgba(0, 0, 0, 1),
+    /* main shadow, fully opaque */ 0.05em 0 0 rgba(0, 0, 0, 1),
+    /* thin right */ -0.05em 0 0 rgba(0, 0, 0, 1),
+    /* thin left */ 0 0.05em 0 rgba(0, 0, 0, 1),
+    /* thin down */ 0 -0.05em 0 rgba(0, 0, 0, 1); /* thin up */
+  letter-spacing: 2px;
 `;

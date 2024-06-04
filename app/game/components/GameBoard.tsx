@@ -315,26 +315,29 @@ const GameBoardContainer = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   height: 100vh;
-  width: 1200px;
-  height: fit-content;
+  width: 100%;
+  height: 100%;
   margin: auto;
-  gap: 14px;
   padding: 12px;
+  padding-bottom: 0px;
+  overflow: hidden;
 `;
 
 const BoardBox = styled(Box)`
   display: flex;
   width: 100%;
+  height: 76%;
   gap: 8px;
 `;
 
 const PlayerBox = styled(Box)`
   display: flex;
   gap: 8px;
+  height: 20%;
   width: 100%;
 `;
 

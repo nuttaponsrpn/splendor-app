@@ -1,6 +1,5 @@
 import { Avatar, AvatarSlotsAndSlotProps, styled } from "@mui/material";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { FC } from "react";
 
 interface GemTokensProps {
@@ -12,10 +11,10 @@ export type GemType = "diamond" | "sapphire" | "emerald" | "ruby" | "onyx";
 
 export const gemColors: Record<GemType, string> = {
   diamond: "#b9f2ff",
-  sapphire: "#0f52ba",
-  emerald: "#50c878",
-  ruby: "#e0115f",
-  onyx: "#353839",
+  sapphire: "#476fff",
+  emerald: "#91ffb6",
+  ruby: "#fe68a1",
+  onyx: "#747576",
 };
 
 export const jokerGemColors = "#fdfd64";
@@ -25,14 +24,11 @@ const GemTokens: FC<GemTokensProps> = ({ gemTokens, onSelectGem }) => {
     <GemTokensContainer>
       {Object.keys(gemTokens).map((gem) => (
         <TokenTiles key={gem}>
-          <Typography variant="body1">
-            {gem.charAt(0).toUpperCase() + gem.slice(1)}:{""}
-            {gemTokens[gem as GemType]}
-          </Typography>
           <Token
             gem={gem as GemType}
+            value={gemTokens[gem as GemType].toString()}
             onClick={() => onSelectGem(gem as GemType)}
-            size="45px"
+            size="2.5vw"
           />
         </TokenTiles>
       ))}
@@ -77,22 +73,23 @@ const AvatarToken = styled(Avatar)<
   width: ${({ size }) => (!!size ? size : "40px")};
   height: ${({ size }) => (!!size ? size : "40px")};
   color: ${({ gem }) => (gem === "joker" ? "black" : "#fff")};
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #fff;
+  box-shadow: 0 0px 8px #ffe853;
+  text-shadow: 0 0 0 rgba(0, 0, 0, 1),
+    /* main shadow, fully opaque */ 0.05em 0 0 rgba(0, 0, 0, 1),
+    /* thin right */ -0.05em 0 0 rgba(0, 0, 0, 1),
+    /* thin left */ 0 0.05em 0 rgba(0, 0, 0, 1),
+    /* thin down */ 0 -0.05em 0 rgba(0, 0, 0, 1); /* thin up */
+  letter-spacing: 2px;
 `;
 
 const GemTokensContainer = styled(Box)`
   display: flex;
-  width: 80%;
-  justify-content: space-around;
+  width: fit-content;
   flex-direction: column;
-  flex: 0 0 100px;
+  align-items: center;
+  justify-content: space-evenly;
   text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  margin-left: auto;
-  margin-right: auto;
 `;
 
 const TokenTiles = styled(Box)`
@@ -101,4 +98,7 @@ const TokenTiles = styled(Box)`
   align-items: center;
   justify-content: center;
   gap: 6px;
+  border: 1px solid #ff232326;
+  border-radius: 50%;
+  cursor: pointer;
 `;

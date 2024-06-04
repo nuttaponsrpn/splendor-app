@@ -45,8 +45,8 @@ const SelectGemTilesContainer = styled(Box)`
   padding: 10px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 252px;
-  height: 110px;
+  width: 20%;
+  height: 100%;
 `;
 
 export default SelectedGemTiles;

@@ -26,7 +26,7 @@ const EndTurnContainer = styled(Box)`
   padding: 10px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 238px;
+  width: 15%;
 `;
 
 const EndTurnButton = styled(Button)`

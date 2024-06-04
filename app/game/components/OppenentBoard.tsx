@@ -24,7 +24,7 @@ const OpponentBoard: FC<OpponentBoardProps> = ({ player }) => {
       >
         {Object.keys(player.gems).map((gem, index) => (
           <OpponentDevelopmentBox key={`${gem}${index}`}>
-            <BlankCard width="30px" height="34px" />
+            <BlankCard width="2.5vw" height="6.5vh" />
             <TokenWrapper>
               <Token
                 gem={gem as GemType}
@@ -46,8 +46,8 @@ const OpponentBoardBox = styled(Box)`
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 8px 18px 22px 18px;
-  gap: 12px;
+  padding: 0.5rem;
+  gap: 0.3rem;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -63,7 +63,7 @@ const PlayerHeader = styled(Box)`
 const OpponentDevelopmentBox = styled(Box)`
   display: flex;
   position: relative;
-  margin-left: 8px;
+  margin-left: 8px !important;
 `;
 
 const TokenWrapper = styled(Box)`
