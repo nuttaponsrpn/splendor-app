@@ -1,31 +1,50 @@
-import { FC } from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
-import { GemType, Token } from "./GemTokens";
-import { BlankCard } from "./DevelopmentTiles";
-import { styled } from "@mui/material";
+"use client";
 
-interface Player {
+import { Button, Dialog, styled } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import { FC, useState } from "react";
+import DevelopmentCards, { DevelopmentCard } from "./DevelopmentCard";
+import { BlankCard } from "./DevelopmentTiles";
+import { gemColors, GemType, jokerGemColors, Token } from "./GemTokens";
+
+export interface Player {
   id: number;
-  gems: Record<GemType, number>;
+  gems: Record<string, number>;
+  jokerGems: number;
   reservedCards: any[];
-  purchasedCards: any[];
+  purchasedCards: GemType[];
+  nobleCards: DevelopmentCard[];
   points: number;
 }
 
 interface PlayerBoardProps {
   player: Player;
-  onPlayerAction: (playerId: number) => void;
+  selectedGem: string[];
+  isDisplayPurchaseCard: (card: DevelopmentCard, player: Player) => boolean;
+  onCardPurchase: (card: DevelopmentCard) => void;
+  getPlayerGemCardAmount: (gem: GemType, player: Player) => number;
 }
 
-const PlayerBoard: FC<PlayerBoardProps> = ({ player, onPlayerAction }) => {
+const PlayerBoard: FC<PlayerBoardProps> = ({
+  selectedGem,
+  player,
+  isDisplayPurchaseCard,
+  onCardPurchase,
+  getPlayerGemCardAmount,
+}) => {
   const playerTokens = Object.keys(player.gems).reduce(
     (acc, cur) => acc + player.gems[cur as GemType],
     0
   );
+  const [isOpenReserveCard, setIsOpenReserveCard] = useState(false);
+  const holdTokensAmount = selectedGem.length + playerTokens;
+
+  function displayBgColor(gemType: GemType) {
+    const isPlayerHaveGemType = player.purchasedCards.includes(gemType);
+    return isPlayerHaveGemType ? gemColors[gemType] : "inherit";
+  }
+
   return (
     <PlayerBoardBox sx={{}}>
       <Stack
@@ -37,7 +56,14 @@ const PlayerBoard: FC<PlayerBoardProps> = ({ player, onPlayerAction }) => {
       >
         {Object.keys(player.gems).map((gem, index) => (
           <PlayerDevelopmentBox key={`${gem}${index}`}>
-            <BlankCard width="60px" height="72px" />
+            <PurchaseAmount>
+              {getPlayerGemCardAmount(gem as GemType, player)}
+            </PurchaseAmount>
+            <BlankCard
+              width="60px"
+              height="72px"
+              bgcolor={displayBgColor(gem as GemType)}
+            />
             <TokenWrapper>
               <Token
                 gem={gem as GemType}
@@ -49,7 +75,54 @@ const PlayerBoard: FC<PlayerBoardProps> = ({ player, onPlayerAction }) => {
           </PlayerDevelopmentBox>
         ))}
       </Stack>
-      <TokenAmount>{playerTokens} / 10</TokenAmount>
+      <TokenAmount>
+        <IsValidSpan
+          valid={holdTokensAmount <= 10}
+          value={holdTokensAmount.toString()}
+        />
+        / 10
+      </TokenAmount>
+
+      <JokerGemsWrapper>
+        <Token size="30px" gem="joker" value={player.jokerGems.toString()} />
+      </JokerGemsWrapper>
+
+      {player.reservedCards.map((i, idx) => (
+        <ReserveCardWrapper
+          key={idx}
+          index={idx}
+          onClick={() => setIsOpenReserveCard(true)}
+        >
+          <BlankCard width="30px" height="40px" bgcolor={jokerGemColors} />
+        </ReserveCardWrapper>
+      ))}
+
+      <Dialog
+        open={isOpenReserveCard}
+        onClose={() => setIsOpenReserveCard(false)}
+        PaperComponent={ReservePaperDialog}
+      >
+        <DevelopmentCardsDialog>
+          {player.reservedCards.map((card, index) => (
+            <ReserveBox key={index}>
+              <DevelopmentCardsWrapper>
+                <DevelopmentCards developmentCard={card} />
+              </DevelopmentCardsWrapper>
+              {isDisplayPurchaseCard(card, player) && (
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    onCardPurchase(card);
+                    setIsOpenReserveCard(false);
+                  }}
+                >
+                  Purchase
+                </Button>
+              )}
+            </ReserveBox>
+          ))}
+        </DevelopmentCardsDialog>
+      </Dialog>
     </PlayerBoardBox>
   );
 };
@@ -79,6 +152,68 @@ const PlayerDevelopmentBox = styled(Box)`
 
 const TokenAmount = styled(Box)`
   position: absolute;
+  bottom: 5px;
+  left: 10px;
+`;
+
+const IsValidSpan = styled("span")<{ valid: boolean; value: string }>`
+  color: ${({ valid }) => (valid ? "inherit" : "red")};
+
+  &:before {
+    content: " ${({ value }) => value} ";
+  }
+`;
+
+const JokerGemsWrapper = styled(Box)`
+  position: absolute;
   top: 5px;
   right: 10px;
+`;
+
+const ReserveCardWrapper = styled(Box)<{ index: number }>`
+  position: absolute;
+  bottom: 5px;
+  right: calc(10px + ${({ index }) => reserveCardCss(index).right}px);
+  transform: rotate(${({ index }) => `${reserveCardCss(index).rotate}turn`});
+  z-index: ${({ index }) => reserveCardCss(index).zIndex};
+`;
+
+function reserveCardCss(idx: number) {
+  switch (idx) {
+    case 0:
+      return { rotate: "0.0", right: 7, zIndex: 2 };
+    case 1:
+      return { rotate: "-0.05", right: 15, zIndex: 1 };
+    case 2:
+      return { rotate: "0.05", right: 0, zIndex: 3 };
+    default:
+      return { rotate: "0.0", right: "", zIndex: "" };
+  }
+}
+
+const DevelopmentCardsDialog = styled(Box)`
+  display: flex;
+  gap: 30px;
+`;
+
+const DevelopmentCardsWrapper = styled(Box)`
+  height: 300px;
+  width: 200px;
+`;
+
+const ReservePaperDialog = styled(Box)`
+  background-color: transparent;
+  max-width: fit-content !important;
+`;
+
+const ReserveBox = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const PurchaseAmount = styled(Box)`
+  position: absolute;
+  top: 5px;
+  right: 8px;
 `;

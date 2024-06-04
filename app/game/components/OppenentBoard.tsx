@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { Player } from "./GameBoard";
 import { Box, Stack, styled, Typography } from "@mui/material";
+import { FC } from "react";
 import { BlankCard } from "./DevelopmentTiles";
 import { GemType, Token } from "./GemTokens";
+import { Player } from "./PlayerBoard";
 
 interface OpponentBoardProps {
   player: Player;
@@ -48,9 +48,9 @@ const OpponentBoardBox = styled(Box)`
   flex-direction: column;
   padding: 8px 18px 22px 18px;
   gap: 12px;
+  background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 

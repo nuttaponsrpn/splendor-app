@@ -1,6 +1,6 @@
 import { Box, styled, Typography } from "@mui/material";
-import { GemType, Token } from "./GemTokens";
 import { FC } from "react";
+import { GemType, Token } from "./GemTokens";
 
 export type DevelopmentLevel = 1 | 2 | 3;
 

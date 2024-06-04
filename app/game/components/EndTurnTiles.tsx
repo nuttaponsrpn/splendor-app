@@ -1,7 +1,5 @@
-import { Box, Button, styled, Typography } from "@mui/material";
-import { GemType, Token } from "./GemTokens";
+import { Box, Button, styled } from "@mui/material";
 import { FC } from "react";
-import { Player } from "./GameBoard";
 
 interface EndTurnTilesProps {
   onClickEndTurn: () => void;
@@ -10,12 +8,14 @@ interface EndTurnTilesProps {
 const EndTurnTiles: FC<EndTurnTilesProps> = ({ onClickEndTurn }) => {
   return (
     <EndTurnContainer>
-      <Button fullWidth sx={{ height: "100%" }}>
+      <EndTurnButton fullWidth onClick={onClickEndTurn}>
         End Turn
-      </Button>
+      </EndTurnButton>
     </EndTurnContainer>
   );
 };
+
+export default EndTurnTiles;
 
 const EndTurnContainer = styled(Box)`
   display: flex;
@@ -29,4 +29,6 @@ const EndTurnContainer = styled(Box)`
   width: 238px;
 `;
 
-export default EndTurnTiles;
+const EndTurnButton = styled(Button)`
+  height: 100%;
+`;

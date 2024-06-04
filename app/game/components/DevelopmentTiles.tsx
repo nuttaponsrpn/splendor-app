@@ -2,10 +2,14 @@ import { Button, Dialog, styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import { FC, useState } from "react";
 import DevelopmentCards, { DevelopmentCard } from "./DevelopmentCard";
+import { Player } from "./PlayerBoard";
 
 interface DevelopmentTilesProps {
+  player: Player;
   developmentCards: DevelopmentCard[];
   onCardReserve: (card: DevelopmentCard) => void;
+  onCardPurchase: (card: DevelopmentCard) => void;
+  isDisplayPurchaseCard: (card: DevelopmentCard, player: Player) => boolean;
 }
 
 interface CardLevelSectionProps {
@@ -15,12 +19,16 @@ interface CardLevelSectionProps {
 }
 
 const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
+  player,
   developmentCards,
   onCardReserve,
+  onCardPurchase,
+  isDisplayPurchaseCard,
 }) => {
   const level1 = developmentCards.filter(({ level }) => level === 1);
   const level2 = developmentCards.filter(({ level }) => level === 2);
   const level3 = developmentCards.filter(({ level }) => level === 3);
+  const isDisplayReserveCard = player.reservedCards.length < 3;
   const [selectCard, setSelectCard] = useState<DevelopmentCard>();
 
   function clearSelectCard() {
@@ -97,10 +105,29 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
         >
           <DevelopmentCards developmentCard={selectCard} />
           <DialogDevelopmentMenu>
-            <Button variant="contained" color="secondary">
-              Reserve
-            </Button>
-            <Button variant="contained">Purchase</Button>
+            {isDisplayPurchaseCard(selectCard, player) && (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  onCardPurchase(selectCard);
+                  clearSelectCard();
+                }}
+              >
+                Purchase
+              </Button>
+            )}
+            {isDisplayReserveCard && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  onCardReserve(selectCard);
+                  clearSelectCard();
+                }}
+              >
+                Reserve
+              </Button>
+            )}
           </DialogDevelopmentMenu>
         </Dialog>
       )}

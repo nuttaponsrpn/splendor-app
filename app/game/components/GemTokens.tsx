@@ -18,6 +18,8 @@ export const gemColors: Record<GemType, string> = {
   onyx: "#353839",
 };
 
+export const jokerGemColors = "#fdfd64";
+
 const GemTokens: FC<GemTokensProps> = ({ gemTokens, onSelectGem }) => {
   return (
     <GemTokensContainer>
@@ -39,7 +41,7 @@ const GemTokens: FC<GemTokensProps> = ({ gemTokens, onSelectGem }) => {
 };
 
 interface TokenProps {
-  gem: GemType;
+  gem: GemType | "joker";
   type?: "circular" | "rounded" | "square";
   value?: string;
   size?: string;
@@ -55,9 +57,10 @@ export const Token: FC<TokenProps> = ({
 }) => {
   return (
     <AvatarToken
-      bgcolor={gemColors[gem as GemType]}
+      gem={gem}
+      bgcolor={gem === "joker" ? jokerGemColors : gemColors[gem as GemType]}
       variant={type}
-      onClick={() => onClick(gem)}
+      onClick={() => onClick(gem as GemType)}
       size={size}
     >
       {!!value ? value : gem.charAt(0).toUpperCase()}
@@ -68,11 +71,14 @@ export const Token: FC<TokenProps> = ({
 export default GemTokens;
 
 const AvatarToken = styled(Avatar)<
-  AvatarSlotsAndSlotProps & { bgcolor: string; size?: string }
+  AvatarSlotsAndSlotProps & { bgcolor: string; size?: string; gem: string }
 >`
   background-color: ${({ bgcolor }) => bgcolor};
   width: ${({ size }) => (!!size ? size : "40px")};
   height: ${({ size }) => (!!size ? size : "40px")};
+  color: ${({ gem }) => (gem === "joker" ? "black" : "#fff")};
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const GemTokensContainer = styled(Box)`
