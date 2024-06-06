@@ -378,7 +378,6 @@ const NobleTilesWrapper = styled(Box)`
   height: 13%;
   max-height: 25%;
   width: 100%;
-  background-color: bisque;
 `;
 
 const PlayerBox = styled(Box)`
