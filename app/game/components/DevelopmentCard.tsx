@@ -14,12 +14,13 @@ export interface DevelopmentCard {
   gemType: GemType;
 }
 
-interface Gem {
+export interface Gem {
   diamond: number;
   sapphire: number;
   emerald: number;
   ruby: number;
   onyx: number;
+  joker: number;
 }
 
 const levelBgColor: LevelBgColor = {
@@ -63,7 +64,7 @@ export default DevelopmentCards;
 
 const DevelopmentCardBox = styled(Card)<{ bgcolor: string }>`
   text-align: center;
-  padding: 6px 8px;
+  padding: 0px 4%;
   background-color: ${({ bgcolor }) => (bgcolor ? bgcolor : "inherit")};
   border-radius: 8px;
   display: flex;
@@ -85,7 +86,8 @@ const DevelopmentCardHeader = styled(Box)`
 const DevelopmentCardFooter = styled(Box)`
   display: flex;
   flex-wrap: wrap-reverse;
-  gap: 6px;
+  gap: 3%;
+  padding-bottom: 8%;
 `;
 
 const CardPoints = styled(Typography)`

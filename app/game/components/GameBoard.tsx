@@ -4,14 +4,11 @@ import { styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { DevelopmentCard } from "./DevelopmentCard";
-import DevelopmentTiles from "./DevelopmentTiles";
-import EndTurnTiles from "./EndTurnTiles";
 import GemTokens, { GemType } from "./GemTokens";
 import { initialGameState } from "./initialGameState";
 import NobleTiles from "./NobleTiles";
 import OpponentBoard from "./OppenentBoard";
-import PlayerBoard, { Player } from "./PlayerBoard";
-import SelectedGemTiles from "./SelectedGemTiles";
+import { Player } from "./PlayerBoard";
 
 export interface GameState {
   currentPlayer: Player;
@@ -68,7 +65,7 @@ export default function GameBoard() {
 
   function isDisplayPurchaseCard(card: DevelopmentCard, player: Player) {
     let isPurchaseable = true;
-    let jokerGems = 0 + player.jokerGems;
+    let jokerGems = 0 + player.gems.joker;
 
     /** Find gem that have cost */
     const payGemType = Object.keys(card.cost).filter((gem) => {
@@ -110,7 +107,7 @@ export default function GameBoard() {
     const playerGems = { ...gameState.players[0].gems };
     const cardCost = { ...card.cost };
     const gemState = { ...gameState.gemTokens };
-    let jokerGems = 0 + gameState.players[0].jokerGems;
+    let jokerGems = 0 + gameState.players[0].gems.joker;
 
     /** Gem type that have cost */
     const payGemType = Object.keys(cardCost).filter((gType) => {
@@ -149,8 +146,8 @@ export default function GameBoard() {
     );
     const updatedPlayer = [...gameState.players];
     player.points += card.points;
+    playerGems.joker = jokerGems;
     player.gems = playerGems;
-    player.jokerGems = jokerGems;
     player.purchasedCards.push(card.gemType);
     player.reservedCards = updateReserveCard;
     updatedPlayer[0] = player;
@@ -225,7 +222,7 @@ export default function GameBoard() {
 
     if (currentPlayer) {
       currentPlayer.reservedCards.push(card);
-      currentPlayer.jokerGems += 1;
+      currentPlayer.gems.joker += 1;
       // Remove the reserved card from available development cards
       const updatedDevelopmentCards = gameState.developmentCards.filter(
         (devCard) => devCard.id !== card.id
@@ -267,31 +264,40 @@ export default function GameBoard() {
   }
 
   return (
-    <GameBoardContainer>
-      <BoardBox>
-        <OpponentBoardWrapper>
-          {gameState.players
-            .filter((_, i) => i > 0)
-            .map((player, key) => (
-              <OpponentBoard key={player.id} player={player} />
-            ))}
-        </OpponentBoardWrapper>
+    <GameBoardContainer className="game-board-container">
+      <OpponentBoardWrapper
+        className="opponent-board"
+        playeramount={[...gameState.players.filter(({ id }) => id != 1)].length}
+      >
+        {[...gameState.players]
+          .filter(({ id }) => id != 1)
+          .map((player, key) => (
+            <OpponentBoard key={player.id + key} player={player} />
+          ))}
+      </OpponentBoardWrapper>
 
-        <DevelopmentTiles
+      <BoardBox className="board-box">
+        {/* <DevelopmentTiles
           player={gameState.players[0]}
           developmentCards={gameState.developmentCards}
           onCardReserve={handleCardReserve}
           onCardPurchase={handleCardPurchase}
           isDisplayPurchaseCard={isDisplayPurchaseCard}
-        />
-        <GemTokens
-          gemTokens={gameState.gemTokens}
-          onSelectGem={handlePlayerSelectGem}
-        />
-        <NobleTiles nobleTiles={gameState.nobleTiles} />
+        /> */}
+
+        <NobleTilesWrapper>
+          <NobleTiles nobleTiles={gameState.nobleTiles} />
+        </NobleTilesWrapper>
+
+        {/* <GemsTokenWrapper>
+          <GemTokens
+            gemTokens={gameState.gemTokens}
+            onSelectGem={handlePlayerSelectGem}
+          />
+        </GemsTokenWrapper> */}
       </BoardBox>
 
-      <PlayerBox>
+      {/* <PlayerBox className="player-box">
         <SelectedGemTiles
           name={gameState.players[0].id.toString()}
           points={gameState.players[0].points.toString()}
@@ -306,7 +312,7 @@ export default function GameBoard() {
           getPlayerGemCardAmount={getPlayerGemCardAmount}
         />
         <EndTurnTiles onClickEndTurn={handleEndTurn} />
-      </PlayerBox>
+      </PlayerBox> */}
     </GameBoardContainer>
   );
 }
@@ -314,35 +320,75 @@ export default function GameBoard() {
 const GameBoardContainer = styled(Box)`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 100vh;
   width: 100%;
-  height: 100%;
-  margin: auto;
-  padding: 12px;
-  padding-bottom: 0px;
   overflow: hidden;
+  gap: 4px;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    height: 100%;
+    margin: auto;
+    padding: 12px;
+    padding-bottom: 0px;
+    overflow: hidden;
+  }
+`;
+
+const OpponentBoardWrapper = styled("div")<{ playeramount: number }>`
+  display: flex;
+  height: 10%;
+  gap: 4px;
+
+  > div {
+    flex: ${({ playeramount }) => {
+      return playeramount > 2 ? "1" : "0 0 33%";
+    }};
+  }
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 `;
 
 const BoardBox = styled(Box)`
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 70%;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    width: 100%;
+    gap: 8px;
+  }
+`;
+
+const GemsTokenWrapper = styled(Box)`
+  height: 15%;
   width: 100%;
-  height: 76%;
-  gap: 8px;
+  background-color: aquamarine;
+`;
+
+const NobleTilesWrapper = styled(Box)`
+  height: 13%;
+  max-height: 25%;
+  width: 100%;
+  background-color: bisque;
 `;
 
 const PlayerBox = styled(Box)`
   display: flex;
-  gap: 8px;
+  flex-direction: row;
   height: 20%;
-  width: 100%;
-`;
 
-const OpponentBoardWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    gap: 8px;
+    height: 20%;
+    width: 100%;
+  }
 `;

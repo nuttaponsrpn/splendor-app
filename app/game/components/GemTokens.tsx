@@ -7,21 +7,26 @@ interface GemTokensProps {
   onSelectGem: (gem: GemType) => void;
 }
 
-export type GemType = "diamond" | "sapphire" | "emerald" | "ruby" | "onyx";
+export type GemType =
+  | "diamond"
+  | "sapphire"
+  | "emerald"
+  | "ruby"
+  | "onyx"
+  | "joker";
 
-export const gemColors: Record<GemType, string> = {
-  diamond: "#b9f2ff",
-  sapphire: "#476fff",
-  emerald: "#91ffb6",
-  ruby: "#fe68a1",
-  onyx: "#747576",
+export const GemColors: Record<GemType, string> = {
+  diamond: "#ffeeb8",
+  sapphire: "#007ef2",
+  emerald: "#07c64f",
+  ruby: "#e10000",
+  onyx: "#362712",
+  joker: "#ffe439",
 };
-
-export const jokerGemColors = "#fdfd64";
 
 const GemTokens: FC<GemTokensProps> = ({ gemTokens, onSelectGem }) => {
   return (
-    <GemTokensContainer>
+    <GemTokensContainer className="gem-token-container">
       {Object.keys(gemTokens).map((gem) => (
         <TokenTiles key={gem}>
           <Token
@@ -54,7 +59,7 @@ export const Token: FC<TokenProps> = ({
   return (
     <AvatarToken
       gem={gem}
-      bgcolor={gem === "joker" ? jokerGemColors : gemColors[gem as GemType]}
+      bgcolor={gem === "joker" ? GemColors.joker : GemColors[gem as GemType]}
       variant={type}
       onClick={() => onClick(gem as GemType)}
       size={size}
@@ -81,15 +86,20 @@ const AvatarToken = styled(Avatar)<
     /* thin left */ 0 0.05em 0 rgba(0, 0, 0, 1),
     /* thin down */ 0 -0.05em 0 rgba(0, 0, 0, 1); /* thin up */
   letter-spacing: 2px;
+  font-size: 10px !important;
 `;
 
 const GemTokensContainer = styled(Box)`
   display: flex;
-  width: fit-content;
-  flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  text-align: center;
+  justify-content: center;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    width: fit-content;
+    flex-direction: column;
+    justify-content: space-evenly;
+    text-align: center;
+  }
 `;
 
 const TokenTiles = styled(Box)`

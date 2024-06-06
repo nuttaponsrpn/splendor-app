@@ -52,12 +52,12 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
     return (
       <CardLevelBox>
         {/* Development Level */}
-        <DevelopmentLevelWrapper>
+        {/* <DevelopmentLevelWrapper>
           <DevelopmentLevelCard>
             <div>Level</div>
             <div>{level}</div>
           </DevelopmentLevelCard>
-        </DevelopmentLevelWrapper>
+        </DevelopmentLevelWrapper> */}
 
         {/* Development Card */}
         {displayDevCard.map((card, index) => (
@@ -80,7 +80,7 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
   };
 
   return (
-    <DevelopmentCardsContainer>
+    <DevelopmentCardsContainer className="development-tiles-container">
       <CardLevelSection
         level={3}
         developmentCards={level3}
@@ -138,18 +138,22 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
 export default DevelopmentTiles;
 
 const DevelopmentCardsContainer = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  gap: 8px;
-  height: 100%;
-  width: 55%;
+  height: 70%;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    gap: 4px;
+    height: 100%;
+    width: 55%;
+  }
 `;
 
 const CardLevelBox = styled(Box)`
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   height: 33%;
   width: 100%;
 `;
@@ -175,11 +179,16 @@ export const BlankCard = styled(DevelopmentCardWrapper)<{
   height?: string;
   bgcolor?: string;
 }>`
-  width: ${({ width }) => (width ? width : "100%")};
-  height: ${({ height }) => (height ? height : "100%")};
-  background-color: ${({ bgcolor }) => (bgcolor ? bgcolor : "inherit")};
+  width: 100%;
+  height: 100%;
   border: 1px solid #ccc;
   border-radius: 8px;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    width: ${({ width }) => (width ? width : "100%")};
+    height: ${({ height }) => (height ? height : "100%")};
+    background-color: ${({ bgcolor }) => (bgcolor ? bgcolor : "inherit")};
+  }
 `;
 
 const DialogDevelopmentMenu = styled(Box)`

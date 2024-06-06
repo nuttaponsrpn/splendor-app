@@ -105,3 +105,11 @@ a {
     color-scheme: dark;
   }
 } */
+
+.text-shadow {
+  font-weight: bold;
+  color: #fff;
+  font-size: xx-small;
+  text-shadow: 0.6px 0.4px 1px #000, 0.4px 0.4px 1px #000, 0.4px -0.4px 0 #000,
+    0.6px 1.6px 0 #000;
+}

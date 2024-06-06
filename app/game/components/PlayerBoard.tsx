@@ -6,12 +6,11 @@ import Stack from "@mui/material/Stack";
 import { FC, useState } from "react";
 import DevelopmentCards, { DevelopmentCard } from "./DevelopmentCard";
 import { BlankCard } from "./DevelopmentTiles";
-import { gemColors, GemType, jokerGemColors, Token } from "./GemTokens";
+import { GemColors, GemType, Token } from "./GemTokens";
 
 export interface Player {
   id: number;
-  gems: Record<string, number>;
-  jokerGems: number;
+  gems: Record<GemType, number>;
   reservedCards: any[];
   purchasedCards: GemType[];
   nobleCards: DevelopmentCard[];
@@ -42,7 +41,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
 
   function displayBgColor(gemType: GemType) {
     const isPlayerHaveGemType = player.purchasedCards.includes(gemType);
-    return isPlayerHaveGemType ? gemColors[gemType] : "inherit";
+    return isPlayerHaveGemType ? GemColors[gemType] : "inherit";
   }
 
   return (
@@ -86,7 +85,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
       </TokenAmount>
 
       <JokerGemsWrapper>
-        <Token size="30px" gem="joker" value={player.jokerGems.toString()} />
+        <Token size="30px" gem="joker" value={player.gems.joker.toString()} />
       </JokerGemsWrapper>
 
       {player.reservedCards.map((i, idx) => (
@@ -95,7 +94,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
           index={idx}
           onClick={() => setIsOpenReserveCard(true)}
         >
-          <BlankCard width="30px" height="40px" bgcolor={jokerGemColors} />
+          <BlankCard width="30px" height="40px" bgcolor={GemColors.joker} />
         </ReserveCardWrapper>
       ))}
 
