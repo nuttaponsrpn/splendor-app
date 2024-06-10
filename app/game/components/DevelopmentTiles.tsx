@@ -1,8 +1,7 @@
-import { Button, Dialog, styled } from "@mui/material";
-import Box from "@mui/material/Box";
 import { FC, useState } from "react";
 import DevelopmentCards, { DevelopmentCard } from "./DevelopmentCard";
 import { Player } from "./PlayerBoard";
+import { Box, Button, Dialog, styled } from "@mui/material";
 
 interface DevelopmentTilesProps {
   player: Player;
@@ -52,12 +51,15 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
     return (
       <CardLevelBox>
         {/* Development Level */}
-        {/* <DevelopmentLevelWrapper>
-          <DevelopmentLevelCard>
-            <div>Level</div>
-            <div>{level}</div>
+        <DevelopmentLevelWrapper>
+          <DevelopmentLevelCard className="text-shadow">
+            {Array(level)
+              .fill("")
+              .map((_, index) => (
+                <span key={`${level}${index}`}>I</span>
+              ))}
           </DevelopmentLevelCard>
-        </DevelopmentLevelWrapper> */}
+        </DevelopmentLevelWrapper>
 
         {/* Development Card */}
         {displayDevCard.map((card, index) => (
@@ -108,6 +110,7 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
             {isDisplayPurchaseCard(selectCard, player) && (
               <Button
                 variant="contained"
+                sx={{ width: "100px" }}
                 onClick={() => {
                   onCardPurchase(selectCard);
                   clearSelectCard();
@@ -120,6 +123,7 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
               <Button
                 variant="contained"
                 color="secondary"
+                sx={{ width: "100px" }}
                 onClick={() => {
                   onCardReserve(selectCard);
                   clearSelectCard();
@@ -138,7 +142,11 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
 export default DevelopmentTiles;
 
 const DevelopmentCardsContainer = styled(Box)`
-  height: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     display: flex;
@@ -165,13 +173,26 @@ const DevelopmentCardWrapper = styled(Box)`
 
 const DevelopmentLevelWrapper = styled(Box)`
   height: 100%;
-  width: 12%;
+  width: 40px;
+  font-family: "ui-monospace";
+  letter-spacing: 0.5px;
+  font-size: 30px;
 `;
 
 const DevelopmentCardDialog = styled(Box)`
   height: 230px;
-  width: 180px;
+  width: 150px;
   display: table !important;
+
+  .card-cost {
+    height: 30px !important;
+    font-size: 20px !important;
+  }
+
+  .development-gem-type {
+    margin-top: 10px;
+    height: 35px;
+  }
 `;
 
 export const BlankCard = styled(DevelopmentCardWrapper)<{
@@ -194,7 +215,7 @@ export const BlankCard = styled(DevelopmentCardWrapper)<{
 const DialogDevelopmentMenu = styled(Box)`
   position: absolute;
   bottom: 0;
-  right: -130px;
+  right: -110px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -205,8 +226,12 @@ const DevelopmentLevelCard = styled(BlankCard)`
   background-color: blanchedalmond;
   height: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 26px;
+  font-size: 27px !important;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+    rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 `;

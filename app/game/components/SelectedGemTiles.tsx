@@ -1,6 +1,6 @@
 import { Box, styled, Typography } from "@mui/material";
 import { FC } from "react";
-import { GemType, Token } from "./GemTokens";
+import Token, { GemType } from "./Tokens";
 
 interface SelectGemTilesProps {
   name: string;
@@ -27,7 +27,6 @@ const SelectedGemTiles: FC<SelectGemTilesProps> = ({
           <Token
             gem={gem}
             key={`${gem}${index}`}
-            size="45px"
             onClick={() => onRemoveGem(gem, index)}
           />
         ))}

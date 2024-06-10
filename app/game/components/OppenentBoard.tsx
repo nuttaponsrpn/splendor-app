@@ -1,13 +1,17 @@
-import { Box, Card, styled, Typography } from "@mui/material";
+import { Box, Card, styled } from "@mui/material";
 import { FC } from "react";
 import { Player } from "./PlayerBoard";
-import { GemColors, GemType } from "./GemTokens";
+import { GemColors, GemType } from "./Tokens";
 
 interface OpponentBoardProps {
   player: Player;
 }
 
 const OpponentBoard: FC<OpponentBoardProps> = ({ player }) => {
+  function getGemCardsAmount(player: Player, gem: GemType) {
+    return player.purchasedCards.filter((g) => g === gem).length.toString();
+  }
+
   return (
     <OpponentBoardBox
       name={`Player${player.id}`}
@@ -20,8 +24,14 @@ const OpponentBoard: FC<OpponentBoardProps> = ({ player }) => {
             key={index}
             gemtype={gem as GemType}
           >
-            <OpponentCard className="shadow" points="1" />
-            <OpponentToken className="shadow" points="1" />
+            <OpponentCard
+              className="shadow"
+              points={getGemCardsAmount(player, gem as GemType)}
+            />
+            <OpponentToken
+              className="shadow"
+              points={player.gems[gem as GemType].toString()}
+            />
           </OpponentCardWrapper>
         ))}
       </OpponentAssetBox>

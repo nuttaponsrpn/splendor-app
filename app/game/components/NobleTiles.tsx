@@ -1,15 +1,23 @@
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { Card, styled } from "@mui/material";
 import Box from "@mui/material/Box";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { DevelopmentCard, Gem } from "./DevelopmentCard";
-import { GemColors, GemType } from "./GemTokens";
-import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { GemColors, GemType } from "./Tokens";
 
 interface NobleTilesProps {
   nobleTiles: DevelopmentCard[];
 }
 
 const NobleTiles: FC<NobleTilesProps> = ({ nobleTiles }) => {
+  const [randomBgColor] = useState([
+    getRandomColorHex(),
+    getRandomColorHex(),
+    getRandomColorHex(),
+    getRandomColorHex(),
+    getRandomColorHex(),
+  ]);
+
   function getGemCost(cost: Gem) {
     return Object.keys(cost).filter((gemType) => cost[gemType as GemType] > 0);
   }
@@ -24,8 +32,8 @@ const NobleTiles: FC<NobleTilesProps> = ({ nobleTiles }) => {
 
   return (
     <NobleTilesContainer className="noble-tiles-container">
-      {nobleTiles.map(({ id, points, cost }) => (
-        <NobleCardWrapper bgcolor={getRandomColorHex()} key={`${id}${points}`}>
+      {nobleTiles.map(({ id, points, cost }, idx) => (
+        <NobleCardWrapper bgcolor={randomBgColor[idx]} key={`${id}${points}`}>
           <CardPoints points={points.toString()} className="text-shadow">
             <StarRoundedIcon />
           </CardPoints>

@@ -4,11 +4,15 @@ import { styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { DevelopmentCard } from "./DevelopmentCard";
-import GemTokens, { GemType } from "./GemTokens";
+import GemBoard from "./GemBoard";
 import { initialGameState } from "./initialGameState";
 import NobleTiles from "./NobleTiles";
 import OpponentBoard from "./OppenentBoard";
-import { Player } from "./PlayerBoard";
+import PlayerBoard, { Player } from "./PlayerBoard";
+import { GemType } from "./Tokens";
+import DevelopmentTiles from "./DevelopmentTiles";
+import SelectedGemTiles from "./SelectedGemTiles";
+import EndTurnTiles from "./EndTurnTiles";
 
 export interface GameState {
   currentPlayer: Player;
@@ -42,11 +46,12 @@ export default function GameBoard() {
     if (selectedGem.length < 3) {
       const isGemLimit = gemTokens[gem] < initialGameState.gemTokens[gem] - 1;
       const isDoubleGemselect = selectedGem.includes(gem) && isGemLimit;
+      const isJoker = gem === "joker";
       const isDuplicate =
         newGem.length === 3 &&
         newGem.filter((item, index) => newGem.indexOf(item) != index).length;
 
-      if (isDoubleGemselect || isDuplicate) {
+      if (isDoubleGemselect || isDuplicate || isJoker) {
         return;
       }
 
@@ -277,42 +282,39 @@ export default function GameBoard() {
       </OpponentBoardWrapper>
 
       <BoardBox className="board-box">
-        {/* <DevelopmentTiles
-          player={gameState.players[0]}
-          developmentCards={gameState.developmentCards}
-          onCardReserve={handleCardReserve}
-          onCardPurchase={handleCardPurchase}
-          isDisplayPurchaseCard={isDisplayPurchaseCard}
-        /> */}
-
-        <NobleTilesWrapper>
+        <NobleTilesWrapper className="noble-tiles-wrapper">
           <NobleTiles nobleTiles={gameState.nobleTiles} />
         </NobleTilesWrapper>
 
-        {/* <GemsTokenWrapper>
-          <GemTokens
+        <GemsTokenWrapper className="gem-token-wrapper">
+          <GemBoard
             gemTokens={gameState.gemTokens}
             onSelectGem={handlePlayerSelectGem}
           />
-        </GemsTokenWrapper> */}
+        </GemsTokenWrapper>
+
+        <DevelopmentTilesWrapper className="development-tiles-wrapper">
+          <DevelopmentTiles
+            player={gameState.players[0]}
+            developmentCards={gameState.developmentCards}
+            onCardReserve={handleCardReserve}
+            onCardPurchase={handleCardPurchase}
+            isDisplayPurchaseCard={isDisplayPurchaseCard}
+          />
+        </DevelopmentTilesWrapper>
       </BoardBox>
 
-      {/* <PlayerBox className="player-box">
-        <SelectedGemTiles
-          name={gameState.players[0].id.toString()}
-          points={gameState.players[0].points.toString()}
-          selectedGems={gameState.selectedGem}
-          onRemoveGem={handlePlayerRemoveGem}
-        />
+      <PlayerBox className="player-box">
         <PlayerBoard
           selectedGem={gameState.selectedGem}
           player={gameState.players[0]}
           isDisplayPurchaseCard={isDisplayPurchaseCard}
-          onCardPurchase={handleCardPurchase}
           getPlayerGemCardAmount={getPlayerGemCardAmount}
+          onCardPurchase={handleCardPurchase}
+          onPlayerRemoveGem={handlePlayerRemoveGem}
+          onPlayerEndTurn={handleEndTurn}
         />
-        <EndTurnTiles onClickEndTurn={handleEndTurn} />
-      </PlayerBox> */}
+      </PlayerBox>
     </GameBoardContainer>
   );
 }
@@ -323,6 +325,9 @@ const GameBoardContainer = styled(Box)`
   width: 100%;
   overflow: hidden;
   gap: 4px;
+  background: #bc48ff;
+  background: -webkit-linear-gradient(0deg, #bc48ff 0%, #474bff 100%);
+  background: linear-gradient(0deg, #bc48ff 0%, #474bff 100%);
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     flex-direction: column;
@@ -359,7 +364,7 @@ const OpponentBoardWrapper = styled("div")<{ playeramount: number }>`
 const BoardBox = styled(Box)`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: space-around;
   height: 70%;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
@@ -369,14 +374,17 @@ const BoardBox = styled(Box)`
 `;
 
 const GemsTokenWrapper = styled(Box)`
-  height: 15%;
+  height: 10%;
   width: 100%;
-  background-color: aquamarine;
 `;
 
 const NobleTilesWrapper = styled(Box)`
   height: 13%;
-  max-height: 25%;
+  width: 100%;
+`;
+
+const DevelopmentTilesWrapper = styled(Box)`
+  height: 70%;
   width: 100%;
 `;
 

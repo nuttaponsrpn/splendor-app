@@ -1,6 +1,6 @@
 import { Box, Card, styled, Typography } from "@mui/material";
 import { FC } from "react";
-import { GemType, Token } from "./GemTokens";
+import Token, { GemColors, GemType } from "./Tokens";
 
 export type DevelopmentLevel = 1 | 2 | 3;
 
@@ -41,18 +41,23 @@ const DevelopmentCards: FC<DevelopmentCardProps> = ({ developmentCard }) => {
     >
       <DevelopmentCardHeader>
         <CardPoints variant="h5">{developmentCard.points}</CardPoints>
-        <Token gem={developmentCard.gemType} size="2.3vw"></Token>
+        <Token
+          gem={developmentCard.gemType}
+          value=" "
+          className="development-gem-type"
+        />
       </DevelopmentCardHeader>
       <DevelopmentCardFooter>
         {Object.keys(developmentCard.cost)
           .filter((key) => developmentCard.cost[key as GemType] > 0)
-          .map((key, i) => (
-            <div key={`${key}${i}`}>
-              <Token
-                gem={key as GemType}
-                size="2vw"
-                value={developmentCard.cost[key as GemType].toString()}
-              ></Token>
+          .map((gemType, i) => (
+            <div key={`${gemType}${i}`}>
+              <CardCost
+                key={`${gemType}${i}`}
+                gem={gemType as GemType}
+                className="text-shadow card-cost"
+                value={developmentCard.cost[gemType as GemType].toString()}
+              />
             </div>
           ))}
       </DevelopmentCardFooter>
@@ -87,7 +92,8 @@ const DevelopmentCardFooter = styled(Box)`
   display: flex;
   flex-wrap: wrap-reverse;
   gap: 3%;
-  padding-bottom: 8%;
+  padding-bottom: 4px;
+  row-gap: 2px;
 `;
 
 const CardPoints = styled(Typography)`
@@ -98,4 +104,28 @@ const CardPoints = styled(Typography)`
     /* thin left */ 0 0.05em 0 rgba(0, 0, 0, 1),
     /* thin down */ 0 -0.05em 0 rgba(0, 0, 0, 1); /* thin up */
   letter-spacing: 2px;
+`;
+
+const CardCost = styled(Box)<{ gem: GemType; value: string }>`
+  background-color: ${({ gem }) => GemColors[gem]};
+  height: 18px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  font-size: 15px !important;
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px,
+    rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px,
+    rgba(0, 0, 0, 0.07) 0px 16px 16px;
+  filter: brightness(1.05);
+  position: relative;
+
+  &:after {
+    content: ${({ value }) => `"${value}"`};
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
 `;
