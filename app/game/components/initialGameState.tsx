@@ -12,7 +12,7 @@ export const initialGameState: GameState = {
   },
   players: [
     {
-      id: 1,
+      id: 2,
       gems: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, joker: 0 },
       reservedCards: [],
       purchasedCards: [],
@@ -20,7 +20,7 @@ export const initialGameState: GameState = {
       nobleCards: [],
     },
     {
-      id: 2,
+      id: 3,
       gems: { diamond: 0, sapphire: 1, emerald: 0, ruby: 0, onyx: 0, joker: 0 },
       reservedCards: [],
       purchasedCards: ["diamond", "diamond"],
@@ -28,7 +28,7 @@ export const initialGameState: GameState = {
       nobleCards: [],
     },
     {
-      id: 3,
+      id: 4,
       gems: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, joker: 0 },
       reservedCards: [],
       purchasedCards: [],

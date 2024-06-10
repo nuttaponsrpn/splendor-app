@@ -17,7 +17,7 @@ import EndTurnTiles from "./EndTurnTiles";
 export interface GameState {
   currentPlayer: Player;
   players: Player[];
-  gemTokens: Record<string, number>;
+  gemTokens: Record<GemType, number>;
   developmentCards: DevelopmentCard[];
   nobleTiles: DevelopmentCard[];
   selectedGem: GemType[];
@@ -25,18 +25,6 @@ export interface GameState {
 
 export default function GameBoard() {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
-
-  const takeGemTokens = (playerId: number, newGems: Record<string, number>) => {
-    setGameState((prevState) => {
-      const newPlayers = prevState.players.map((player) => {
-        if (player.id === playerId) {
-          return { ...player, gems: newGems };
-        }
-        return player;
-      });
-      return { ...prevState, players: newPlayers };
-    });
-  };
 
   const handlePlayerSelectGem = (gem: GemType) => {
     const selectedGem = [...gameState.selectedGem];
@@ -108,11 +96,11 @@ export default function GameBoard() {
   };
 
   const handleCardPurchase = (card: DevelopmentCard) => {
-    const player = { ...gameState.players[0] };
-    const playerGems = { ...gameState.players[0].gems };
+    const player = { ...gameState.currentPlayer };
+    const playerGems = { ...gameState.currentPlayer.gems };
     const cardCost = { ...card.cost };
     const gemState = { ...gameState.gemTokens };
-    let jokerGems = 0 + gameState.players[0].gems.joker;
+    let jokerGems = 0 + gameState.currentPlayer.gems.joker;
 
     /** Gem type that have cost */
     const payGemType = Object.keys(cardCost).filter((gType) => {
@@ -129,15 +117,20 @@ export default function GameBoard() {
     /** Pay card cost */
     Object.keys(cardCost).forEach((gType) => {
       const gemType = gType as GemType;
-      const gemCost = cardCost[gemType];
+      let gemCost = cardCost[gemType];
       if (gemCost > 0) {
-        const payGem = playerGems[gemType] - gemCost;
-        if (payGem < 0) {
-          jokerGems += payGem;
-          gemState[gemType] += playerGems[gemType];
-          playerGems[gemType] = 0;
-        } else {
+        // const payGem = playerGems[gemType] - gemCost;
+        const initPlayerGem = playerGems[gemType];
+
+        if (playerGems[gemType] > 0) {
           playerGems[gemType] -= gemCost;
+          gemState[gemType] += gemCost;
+          gemCost -= initPlayerGem;
+        }
+
+        if (gemCost > 0) {
+          jokerGems -= gemCost;
+          gemState["joker"] += gemCost;
         }
       }
     });
@@ -146,22 +139,20 @@ export default function GameBoard() {
     const updatedDevelopmentCard = [...gameState.developmentCards].filter(
       ({ id }) => id !== card.id
     );
-    const updateReserveCard = [...gameState.players[0].reservedCards].filter(
+    const updateReserveCard = [...gameState.currentPlayer.reservedCards].filter(
       ({ id }) => id !== card.id
     );
-    const updatedPlayer = [...gameState.players];
     player.points += card.points;
     playerGems.joker = jokerGems;
     player.gems = playerGems;
     player.purchasedCards.push(card.gemType);
     player.reservedCards = updateReserveCard;
-    updatedPlayer[0] = player;
 
     checkNobleCondition(player);
     setGameState((prev) => ({
       ...prev,
       gemTokens: gemState,
-      players: updatedPlayer,
+      currentPlayer: player,
       developmentCards: updatedDevelopmentCard,
     }));
   };
@@ -179,14 +170,12 @@ export default function GameBoard() {
         const playerCards = getPlayerGemCardAmount(gemType, player);
         const nobleCost = noble.cost[gemType];
 
-        console.log("playerCards < nobleCost", playerCards, nobleCost);
         if (playerCards < nobleCost) {
           isGetNoble = false;
           return;
         }
       });
 
-      console.log("isGetNoble", isGetNoble);
       if (isGetNoble) {
         latestNoble = noble;
       }
@@ -207,8 +196,6 @@ export default function GameBoard() {
       const updatedPlayers = [...gameState.players];
       updatedPlayers[playerId] = updatedPlayer;
 
-      console.log("latestNoble", latestNoble);
-
       setGameState((prev) => ({
         ...prev,
         nobleTiles: updatedNobleTiles,
@@ -219,11 +206,7 @@ export default function GameBoard() {
   }
 
   const handleCardReserve = (card: DevelopmentCard) => {
-    const currentPlayerId = gameState.currentPlayer;
-    const updatedPlayers = [...gameState.players];
-    const currentPlayer = updatedPlayers.find(
-      (player) => player.id === currentPlayerId.id
-    );
+    const currentPlayer = { ...gameState.currentPlayer };
 
     if (currentPlayer) {
       currentPlayer.reservedCards.push(card);
@@ -235,25 +218,24 @@ export default function GameBoard() {
 
       setGameState((prevState) => ({
         ...prevState,
-        players: updatedPlayers,
+        currentPlayer: currentPlayer,
         developmentCards: updatedDevelopmentCards,
       }));
     }
   };
 
   function handleEndTurn() {
-    const player = gameState.players[0];
-    const playerGem = { ...player.gems };
-    const playerGemsAmount = getPlayerGemsAmount(player);
+    const updatedPlayer = { ...gameState.currentPlayer };
+    const playerGemsAmount = getPlayerGemsAmount(updatedPlayer);
     const holdAmount = playerGemsAmount + gameState.selectedGem.length;
 
     if (holdAmount <= 10) {
       gameState.selectedGem.forEach((sGem) => {
-        playerGem[sGem] += 1;
+        updatedPlayer.gems[sGem] += 1;
       });
 
       clearSelectedGem();
-      takeGemTokens(player.id, playerGem);
+      setGameState((prev) => ({ ...prev, currentPlayer: updatedPlayer }));
     }
   }
 
@@ -295,7 +277,7 @@ export default function GameBoard() {
 
         <DevelopmentTilesWrapper className="development-tiles-wrapper">
           <DevelopmentTiles
-            player={gameState.players[0]}
+            player={gameState.currentPlayer}
             developmentCards={gameState.developmentCards}
             onCardReserve={handleCardReserve}
             onCardPurchase={handleCardPurchase}
@@ -307,7 +289,7 @@ export default function GameBoard() {
       <PlayerBox className="player-box">
         <PlayerBoard
           selectedGem={gameState.selectedGem}
-          player={gameState.players[0]}
+          player={gameState.currentPlayer}
           isDisplayPurchaseCard={isDisplayPurchaseCard}
           getPlayerGemCardAmount={getPlayerGemCardAmount}
           onCardPurchase={handleCardPurchase}

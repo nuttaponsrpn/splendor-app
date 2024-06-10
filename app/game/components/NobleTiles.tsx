@@ -33,7 +33,7 @@ const NobleTiles: FC<NobleTilesProps> = ({ nobleTiles }) => {
   return (
     <NobleTilesContainer className="noble-tiles-container">
       {nobleTiles.map(({ id, points, cost }, idx) => (
-        <NobleCardWrapper bgcolor={randomBgColor[idx]} key={`${id}${points}`}>
+        <NobleCardWrapper key={`${id}${points}`}>
           <CardPoints points={points.toString()} className="text-shadow">
             <StarRoundedIcon />
           </CardPoints>
@@ -64,7 +64,7 @@ const NobleTilesContainer = styled(Box)`
   justify-content: center;
 `;
 
-const NobleCardWrapper = styled(Card)<{ bgcolor: string }>`
+const NobleCardWrapper = styled(Card)`
   width: calc(100% - 8px);
   height: calc(100% - 8px);
   padding: 10px;
@@ -79,7 +79,7 @@ const NobleCardWrapper = styled(Card)<{ bgcolor: string }>`
   &:after {
     content: " ";
     position: absolute;
-    background-color: ${({ bgcolor }) => bgcolor};
+    background-color: burlywood;
     width: calc(100% - 22px);
     height: calc(100% - 20px);
     border-radius: 6px;

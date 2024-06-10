@@ -44,7 +44,7 @@ const DevelopmentCards: FC<DevelopmentCardProps> = ({ developmentCard }) => {
         <Token
           gem={developmentCard.gemType}
           value=" "
-          className="development-gem-type"
+          addClass="development-gem-type"
         />
       </DevelopmentCardHeader>
       <DevelopmentCardFooter>

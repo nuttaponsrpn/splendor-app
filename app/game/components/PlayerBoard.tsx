@@ -1,16 +1,16 @@
 "use client";
 
-import { Card, styled } from "@mui/material";
+import { Button, Card, Dialog, styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import { FC, useState } from "react";
-import { DevelopmentCard, Gem } from "./DevelopmentCard";
+import DevelopmentCards, { DevelopmentCard, Gem } from "./DevelopmentCard";
 import EndTurnTiles from "./EndTurnTiles";
 import Token, { GemColors, GemType } from "./Tokens";
 
 export interface Player {
   id: number;
   gems: Record<GemType, number>;
-  reservedCards: any[];
+  reservedCards: DevelopmentCard[];
   purchasedCards: GemType[];
   nobleCards: DevelopmentCard[];
   points: number;
@@ -30,8 +30,8 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
   selectedGem,
   player,
   isDisplayPurchaseCard,
-  onCardPurchase,
   getPlayerGemCardAmount,
+  onCardPurchase,
   onPlayerRemoveGem,
   onPlayerEndTurn,
 }) => {
@@ -42,9 +42,17 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
   const [isOpenReserveCard, setIsOpenReserveCard] = useState(false);
   const holdTokensAmount = selectedGem.length + playerTokens;
 
-  function displayBgColor(gemType: GemType) {
-    const isPlayerHaveGemType = player.purchasedCards.includes(gemType);
-    return isPlayerHaveGemType ? GemColors[gemType] : "inherit";
+  function getPlayerCardAmount(gemType: GemType) {
+    if (gemType === "joker") {
+      return player.reservedCards.length;
+    }
+    return getPlayerGemCardAmount(gemType as GemType, player);
+  }
+
+  function onClickJokerCard(gemType: GemType) {
+    if (gemType === "joker" && player.reservedCards.length > 0) {
+      setIsOpenReserveCard(true);
+    }
   }
 
   return (
@@ -54,7 +62,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
         <TokenWrapprer>
           {selectedGem.map((gem, index) => (
             <Token
-              key={gem}
+              key={`${gem}${index}`}
               gem={gem}
               onClick={() => onPlayerRemoveGem(gem, index)}
             />
@@ -72,10 +80,8 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
           >
             <PlayerCard
               className="shadow"
-              points={getPlayerGemCardAmount(
-                gemType as GemType,
-                player
-              ).toString()}
+              points={getPlayerCardAmount(gemType as GemType).toString()}
+              onClick={() => onClickJokerCard(gemType as GemType)}
             >
               <PlayerToken
                 className="shadow"
@@ -141,7 +147,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
         </ReserveCardWrapper>
       ))} */}
 
-      {/* <Dialog
+      <Dialog
         open={isOpenReserveCard}
         onClose={() => setIsOpenReserveCard(false)}
         PaperComponent={ReservePaperDialog}
@@ -153,7 +159,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
                 <DevelopmentCards developmentCard={card} />
               </DevelopmentCardsWrapper>
               {isDisplayPurchaseCard(card, player) && (
-                <Button
+                <PurchaseButton
                   variant="contained"
                   onClick={() => {
                     onCardPurchase(card);
@@ -161,12 +167,12 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
                   }}
                 >
                   Purchase
-                </Button>
+                </PurchaseButton>
               )}
             </ReserveBox>
           ))}
         </DevelopmentCardsDialog>
-      </Dialog> */}
+      </Dialog>
     </PlayerBoardBox>
   );
 };
@@ -380,12 +386,9 @@ const PlayerToken = styled(Box)<{ points: string }>`
 //   right: -20px;
 // `;
 
-// const PlayerDevelopmentBox = styled(Box)`
-//   display: flex;
-//   position: relative;
-//   flex: 1;
-//   height: 100%;
-// `;
+const PurchaseButton = styled(Button)`
+  font-size: 12px;
+`;
 
 const TokenAmount = styled(Box)`
   position: absolute;
@@ -409,53 +412,53 @@ const IsValidSpan = styled("span")<{ valid: boolean; value: string }>`
 //   right: 10px;
 // `;
 
-// const ReserveCardWrapper = styled(Box)<{ index: number }>`
-//   position: absolute;
-//   bottom: 5px;
-//   right: calc(10px + ${({ index }) => reserveCardCss(index).right}px);
-//   transform: rotate(${({ index }) => `${reserveCardCss(index).rotate}turn`});
-//   z-index: ${({ index }) => reserveCardCss(index).zIndex};
-// `;
+const ReserveCardWrapper = styled(Box)<{ index: number }>`
+  position: absolute;
+  bottom: 5px;
+  right: calc(10px + ${({ index }) => reserveCardCss(index).right}px);
+  transform: rotate(${({ index }) => `${reserveCardCss(index).rotate}turn`});
+  z-index: ${({ index }) => reserveCardCss(index).zIndex};
+`;
 
-// function reserveCardCss(idx: number) {
-//   switch (idx) {
-//     case 0:
-//       return { rotate: "0.0", right: 7, zIndex: 2 };
-//     case 1:
-//       return { rotate: "-0.05", right: 15, zIndex: 1 };
-//     case 2:
-//       return { rotate: "0.05", right: 0, zIndex: 3 };
-//     default:
-//       return { rotate: "0.0", right: "", zIndex: "" };
-//   }
-// }
+function reserveCardCss(idx: number) {
+  switch (idx) {
+    case 0:
+      return { rotate: "0.0", right: 7, zIndex: 2 };
+    case 1:
+      return { rotate: "-0.05", right: 15, zIndex: 1 };
+    case 2:
+      return { rotate: "0.05", right: 0, zIndex: 3 };
+    default:
+      return { rotate: "0.0", right: "", zIndex: "" };
+  }
+}
 
-// const DevelopmentCardsDialog = styled(Box)`
-//   display: flex;
-//   gap: 30px;
-// `;
+const DevelopmentCardsDialog = styled(Box)`
+  display: flex;
+  gap: 12px;
+`;
 
-// const DevelopmentCardsWrapper = styled(Box)`
-//   height: 300px;
-//   width: 200px;
-// `;
+const DevelopmentCardsWrapper = styled(Box)`
+  height: 150px;
+  width: 100px;
+`;
 
-// const ReservePaperDialog = styled(Box)`
-//   background-color: transparent;
-//   max-width: fit-content !important;
-// `;
+const ReservePaperDialog = styled(Box)`
+  background-color: transparent;
+  margin: 0px !important;
+`;
 
-// const ReserveBox = styled(Box)`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 8px;
-// `;
+const ReserveBox = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
-// const PurchaseAmount = styled(Box)`
-//   position: absolute;
-//   top: 5px;
-//   right: 8px;
-// `;
+const PurchaseAmount = styled(Box)`
+  position: absolute;
+  top: 5px;
+  right: 8px;
+`;
 
 const TokenWrapprer = styled(Box)`
   display: flex;

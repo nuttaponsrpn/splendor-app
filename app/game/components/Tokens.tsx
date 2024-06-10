@@ -22,19 +22,19 @@ export const GemColors: Record<GemType, string> = {
 interface TokenProps {
   gem: GemType;
   value?: string;
-  className?: string;
+  addClass?: string;
   onClick?: (gem: GemType) => void;
 }
 
 const Token: FC<TokenProps> = ({
   gem,
   value,
-  className = "",
+  addClass = "",
   onClick = (gem: GemType) => {},
 }) => {
   return (
     <TokenBox
-      className={`text-shadow ${className}`}
+      className={`text-shadow ${addClass}`}
       gem={gem}
       onClick={() => onClick(gem)}
     >
