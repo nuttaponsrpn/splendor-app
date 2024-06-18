@@ -2,19 +2,20 @@
 
 import { styled } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { WebsocketRequest, WebsocketResponse } from "../types/websocket_type";
 import { DevelopmentCard } from "./DevelopmentCard";
+import DevelopmentTiles from "./DevelopmentTiles";
 import GemBoard from "./GemBoard";
 import { initialGameState } from "./initialGameState";
 import NobleTiles from "./NobleTiles";
 import OpponentBoard from "./OppenentBoard";
 import PlayerBoard, { Player } from "./PlayerBoard";
 import { GemType } from "./Tokens";
-import DevelopmentTiles from "./DevelopmentTiles";
-import SelectedGemTiles from "./SelectedGemTiles";
-import EndTurnTiles from "./EndTurnTiles";
 
 export interface GameState {
+  playerTurn: string;
   currentPlayer: Player;
   players: Player[];
   gemTokens: Record<GemType, number>;
@@ -23,10 +24,70 @@ export interface GameState {
   selectedGem: GemType[];
 }
 
-export default function GameBoard() {
+interface GemBoardProps {
+  playerID: string;
+}
+
+export default function GameBoard({ playerID }: GemBoardProps) {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
+  const [wsState, setWsState] = useState<WebSocket>();
+  const router = useRouter();
+
+  useEffect(() => {
+    const roomID = localStorage.getItem("roomID");
+    if (!roomID) {
+      router.push("/");
+      return;
+    }
+
+    const ws = new WebSocket(
+      `ws://localhost:8080/ws?room_id=${roomID}&playerID=${playerID}`
+    );
+    window.addEventListener("beforeunload", (e) => {
+      if (!!roomID) {
+        const message: WebsocketRequest = {
+          playerId: playerID,
+          status: "CloseConnection",
+        };
+        ws.send(JSON.stringify(message));
+      }
+    });
+
+    ws.onmessage = function (event) {
+      let msg = JSON.parse(event.data) as WebsocketResponse;
+      console.log("msg", msg);
+      setGameState((prev) => {
+        const newGameState = { ...prev };
+        newGameState.developmentCards = [
+          ...msg.developmentTiles.level1,
+          ...msg.developmentTiles.level2,
+          ...msg.developmentTiles.level3,
+        ];
+        newGameState.playerTurn = msg.currentPlayerId;
+        newGameState.nobleTiles = msg.nobles;
+        newGameState.players = [...msg.players.filter((p) => p.id != playerID)];
+        newGameState.currentPlayer = msg.players.find((p) => p.id == playerID)!;
+        newGameState.gemTokens = msg.gems;
+        return newGameState;
+      });
+    };
+    ws.onopen = function () {
+      const message: WebsocketRequest = {
+        playerId: playerID,
+        status: "Waiting",
+      };
+      ws.send(JSON.stringify(message));
+      setWsState(ws);
+      localStorage.removeItem("roomID");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePlayerSelectGem = (gem: GemType) => {
+    if (!validateIsPlayerTurn()) {
+      return;
+    }
+
     const selectedGem = [...gameState.selectedGem];
     const gemTokens = { ...gameState.gemTokens };
     const newGem = [...selectedGem, gem];
@@ -53,10 +114,14 @@ export default function GameBoard() {
   };
 
   function getPlayerGemCardAmount(gem: GemType, player: Player) {
-    return player.purchasedCards.filter((gemType) => gemType === gem).length;
+    return player.purchasedCards.filter((card) => card.gemType === gem).length;
   }
 
   function isDisplayPurchaseCard(card: DevelopmentCard, player: Player) {
+    if (!validateIsPlayerTurn()) {
+      return false;
+    }
+
     let isPurchaseable = true;
     let jokerGems = 0 + player.gems.joker;
 
@@ -85,6 +150,10 @@ export default function GameBoard() {
   }
 
   const handlePlayerRemoveGem = (gem: GemType, index: number) => {
+    if (!validateIsPlayerTurn()) {
+      return;
+    }
+
     const removedGem = [...gameState.selectedGem].filter((_, i) => i != index);
     const gemTokens = { ...gameState.gemTokens };
     gemTokens[gem] += 1;
@@ -96,131 +165,38 @@ export default function GameBoard() {
   };
 
   const handleCardPurchase = (card: DevelopmentCard) => {
-    const player = { ...gameState.currentPlayer };
-    const playerGems = { ...gameState.currentPlayer.gems };
-    const cardCost = { ...card.cost };
-    const gemState = { ...gameState.gemTokens };
-    let jokerGems = 0 + gameState.currentPlayer.gems.joker;
+    if (!validateIsPlayerTurn()) {
+      return;
+    }
 
-    /** Gem type that have cost */
-    const payGemType = Object.keys(cardCost).filter((gType) => {
-      const gemType = gType as GemType;
-      return card.cost[gemType] > 0;
-    });
-
-    /** Calculate card cost minus purchase card */
-    payGemType.forEach((gType) => {
-      const gemType = gType as GemType;
-      cardCost[gemType] -= getPlayerGemCardAmount(gemType, player);
-    });
-
-    /** Pay card cost */
-    Object.keys(cardCost).forEach((gType) => {
-      const gemType = gType as GemType;
-      let gemCost = cardCost[gemType];
-      if (gemCost > 0) {
-        // const payGem = playerGems[gemType] - gemCost;
-        const initPlayerGem = playerGems[gemType];
-
-        if (playerGems[gemType] > 0) {
-          playerGems[gemType] -= gemCost;
-          gemState[gemType] += gemCost;
-          gemCost -= initPlayerGem;
-        }
-
-        if (gemCost > 0) {
-          jokerGems -= gemCost;
-          gemState["joker"] += gemCost;
-        }
-      }
-    });
-
-    /** Updated player value */
-    const updatedDevelopmentCard = [...gameState.developmentCards].filter(
-      ({ id }) => id !== card.id
+    wsState!.send(
+      JSON.stringify({
+        playerId: gameState.currentPlayer.id,
+        purchasedCard: card,
+        reservedCard: {},
+        selectedGems: gameState.selectedGem,
+        status: "Started",
+      } as WebsocketRequest)
     );
-    const updateReserveCard = [...gameState.currentPlayer.reservedCards].filter(
-      ({ id }) => id !== card.id
-    );
-    player.points += card.points;
-    playerGems.joker = jokerGems;
-    player.gems = playerGems;
-    player.purchasedCards.push(card.gemType);
-    player.reservedCards = updateReserveCard;
-
-    checkNobleCondition(player);
-    setGameState((prev) => ({
-      ...prev,
-      gemTokens: gemState,
-      currentPlayer: player,
-      developmentCards: updatedDevelopmentCard,
-    }));
   };
 
-  function checkNobleCondition(player: Player) {
-    let latestNoble: DevelopmentCard | undefined;
-    gameState.nobleTiles.forEach((noble) => {
-      const nobleCost = Object.keys(noble.cost).filter((gem) => {
-        return noble.cost[gem as GemType] > 0;
-      });
-
-      let isGetNoble = true;
-      nobleCost.forEach((gTpye) => {
-        const gemType = gTpye as GemType;
-        const playerCards = getPlayerGemCardAmount(gemType, player);
-        const nobleCost = noble.cost[gemType];
-
-        if (playerCards < nobleCost) {
-          isGetNoble = false;
-          return;
-        }
-      });
-
-      if (isGetNoble) {
-        latestNoble = noble;
-      }
-    });
-
-    if (!!latestNoble) {
-      const updatedPlayer = { ...player };
-      updatedPlayer.nobleCards = [...player.nobleCards, latestNoble];
-      updatedPlayer.points = player.points += latestNoble.points;
-
-      const updatedNobleTiles = gameState.nobleTiles.filter(
-        (noble) => noble.id != latestNoble!.id
-      );
-
-      const playerId = gameState.players.findIndex(
-        ({ id }) => id === player.id
-      );
-      const updatedPlayers = [...gameState.players];
-      updatedPlayers[playerId] = updatedPlayer;
-
-      setGameState((prev) => ({
-        ...prev,
-        nobleTiles: updatedNobleTiles,
-        players: updatedPlayers,
-        currentPlayer: updatedPlayer,
-      }));
-    }
-  }
-
   const handleCardReserve = (card: DevelopmentCard) => {
+    if (!validateIsPlayerTurn()) {
+      return;
+    }
+
     const currentPlayer = { ...gameState.currentPlayer };
 
     if (currentPlayer) {
-      currentPlayer.reservedCards.push(card);
-      currentPlayer.gems.joker += 1;
-      // Remove the reserved card from available development cards
-      const updatedDevelopmentCards = gameState.developmentCards.filter(
-        (devCard) => devCard.id !== card.id
+      wsState!.send(
+        JSON.stringify({
+          playerId: gameState.currentPlayer.id,
+          purchasedCard: {},
+          reservedCard: card,
+          selectedGems: ["joker"],
+          status: "Started",
+        } as WebsocketRequest)
       );
-
-      setGameState((prevState) => ({
-        ...prevState,
-        currentPlayer: currentPlayer,
-        developmentCards: updatedDevelopmentCards,
-      }));
     }
   };
 
@@ -234,9 +210,21 @@ export default function GameBoard() {
         updatedPlayer.gems[sGem] += 1;
       });
 
+      wsState!.send(
+        JSON.stringify({
+          playerId: gameState.currentPlayer.id,
+          selectedGems: gameState.selectedGem,
+          purchasedCard: {},
+          reservedCard: {},
+          status: "Started",
+        })
+      );
       clearSelectedGem();
-      setGameState((prev) => ({ ...prev, currentPlayer: updatedPlayer }));
     }
+  }
+
+  function validateIsPlayerTurn() {
+    return gameState.playerTurn == gameState.currentPlayer.id;
   }
 
   function getPlayerGemsAmount(player: Player) {
@@ -254,13 +242,11 @@ export default function GameBoard() {
     <GameBoardContainer className="game-board-container">
       <OpponentBoardWrapper
         className="opponent-board"
-        playeramount={[...gameState.players.filter(({ id }) => id != 1)].length}
+        playeramount={gameState.players.length}
       >
-        {[...gameState.players]
-          .filter(({ id }) => id != 1)
-          .map((player, key) => (
-            <OpponentBoard key={player.id + key} player={player} />
-          ))}
+        {gameState.players.map((player, key) => (
+          <OpponentBoard key={player.id + key} player={player} />
+        ))}
       </OpponentBoardWrapper>
 
       <BoardBox className="board-box">
@@ -288,6 +274,7 @@ export default function GameBoard() {
 
       <PlayerBox className="player-box">
         <PlayerBoard
+          playerTurn={gameState.playerTurn}
           selectedGem={gameState.selectedGem}
           player={gameState.currentPlayer}
           isDisplayPurchaseCard={isDisplayPurchaseCard}

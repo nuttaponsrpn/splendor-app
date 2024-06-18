@@ -3,20 +3,30 @@
 import { Button, Card, Dialog, styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import { FC, useState } from "react";
-import DevelopmentCards, { DevelopmentCard, Gem } from "./DevelopmentCard";
+import DevelopmentCards, { DevelopmentCard } from "./DevelopmentCard";
 import EndTurnTiles from "./EndTurnTiles";
 import Token, { GemColors, GemType } from "./Tokens";
 
 export interface Player {
-  id: number;
+  id: string;
   gems: Record<GemType, number>;
   reservedCards: DevelopmentCard[];
-  purchasedCards: GemType[];
+  purchasedCards: DevelopmentCard[];
   nobleCards: DevelopmentCard[];
   points: number;
 }
 
+const GemOrder: GemType[] = [
+  "diamond",
+  "sapphire",
+  "emerald",
+  "ruby",
+  "onyx",
+  "joker",
+];
+
 interface PlayerBoardProps {
+  playerTurn: string;
   player: Player;
   selectedGem: GemType[];
   isDisplayPurchaseCard: (card: DevelopmentCard, player: Player) => boolean;
@@ -27,6 +37,7 @@ interface PlayerBoardProps {
 }
 
 const PlayerBoard: FC<PlayerBoardProps> = ({
+  playerTurn,
   selectedGem,
   player,
   isDisplayPurchaseCard,
@@ -56,7 +67,10 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
   }
 
   return (
-    <PlayerBoardBox name={"Player " + player.id}>
+    <PlayerBoardBox name={player.id ? player.id : ""}>
+      <PlayerPoints className="player-points text-shadow">
+        {player.points}
+      </PlayerPoints>
       <PlayerBoardHeader>
         {/* Player Gem */}
         <TokenWrapprer>
@@ -72,7 +86,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
 
       {/* Player Card */}
       <PlayerCardBox>
-        {Object.keys(player.gems).map((gemType, index) => (
+        {GemOrder.map((gemType, index) => (
           <PlayerCardWrapper
             key={gemType}
             className="player-card-wrapper text-shadow"
@@ -100,52 +114,11 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
         </TokenAmount>
       </PlayerCardBox>
 
-      <EndTurnWrapper>
-        <EndTurnTiles onClickEndTurn={onPlayerEndTurn} />
-      </EndTurnWrapper>
-      {/* <Stack
-        direction="row"
-        spacing={2}
-        alignItems="center"
-        justifyContent="center"
-        gap="20px"
-        width="80%"
-        height="100%"
-      >
-        {Object.keys(player.gems).map((gem, index) => (
-          <PlayerDevelopmentBox key={`${gem}${index}`}>
-            <PurchaseAmount>
-              {getPlayerGemCardAmount(gem as GemType, player)}
-            </PurchaseAmount>
-            <BlankCard
-              width="100%"
-              height="100%"
-              bgcolor={displayBgColor(gem as GemType)}
-            />
-            <TokenWrapper>
-              <Token
-                gem={gem as GemType}
-                onClick={() => {}}
-                value={player.gems[gem as GemType].toString()}
-              />
-            </TokenWrapper>
-          </PlayerDevelopmentBox>
-        ))}
-      </Stack>
-
-      <JokerGemsWrapper>
-        <Token gem="joker" value={player.gems.joker.toString()} />
-      </JokerGemsWrapper>
-
-      {player.reservedCards.map((i, idx) => (
-        <ReserveCardWrapper
-          key={idx}
-          index={idx}
-          onClick={() => setIsOpenReserveCard(true)}
-        >
-          <BlankCard width="30px" height="40px" bgcolor={GemColors.joker} />
-        </ReserveCardWrapper>
-      ))} */}
+      {playerTurn === player.id && (
+        <EndTurnWrapper>
+          <EndTurnTiles onClickEndTurn={onPlayerEndTurn} />
+        </EndTurnWrapper>
+      )}
 
       <Dialog
         open={isOpenReserveCard}
@@ -380,11 +353,6 @@ const PlayerToken = styled(Box)<{ points: string }>`
     ) !important;
   }
 `;
-// const TokenWrapper = styled(Box)`
-//   position: absolute;
-//   bottom: -20px;
-//   right: -20px;
-// `;
 
 const PurchaseButton = styled(Button)`
   font-size: 12px;
@@ -405,12 +373,6 @@ const IsValidSpan = styled("span")<{ valid: boolean; value: string }>`
     content: " ${({ value }) => value} ";
   }
 `;
-
-// const JokerGemsWrapper = styled(Box)`
-//   position: absolute;
-//   top: 5px;
-//   right: 10px;
-// `;
 
 const ReserveCardWrapper = styled(Box)<{ index: number }>`
   position: absolute;
@@ -477,4 +439,12 @@ const EndTurnWrapper = styled(Box)`
   width: 120px;
   height: 45px;
   z-index: 2;
+`;
+
+const PlayerPoints = styled(Box)`
+  z-index: 3;
+  font-size: 22px !important;
+  position: absolute;
+  top: 0;
+  margin-right: 110px;
 `;

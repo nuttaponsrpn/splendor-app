@@ -9,14 +9,13 @@ interface OpponentBoardProps {
 
 const OpponentBoard: FC<OpponentBoardProps> = ({ player }) => {
   function getGemCardsAmount(player: Player, gem: GemType) {
-    return player.purchasedCards.filter((g) => g === gem).length.toString();
+    return player.purchasedCards
+      .filter((card) => card.gemType === gem)
+      .length.toString();
   }
 
   return (
-    <OpponentBoardBox
-      name={`Player${player.id}`}
-      className="opponent-board-box"
-    >
+    <OpponentBoardBox name={player.id} className="opponent-board-box">
       <OpponentAssetBox>
         {Object.keys(player.gems).map((gem, index) => (
           <OpponentCardWrapper
