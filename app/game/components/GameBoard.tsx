@@ -41,7 +41,7 @@ export default function GameBoard({ playerID }: GemBoardProps) {
     }
 
     const ws = new WebSocket(
-      `ws://localhost:8080/ws?room_id=${roomID}&playerID=${playerID}`
+      `ws://go-splendor-purple-resonance-4326.fly.dev/ws?room_id=${roomID}&playerID=${playerID}`
     );
     window.addEventListener("beforeunload", (e) => {
       if (!!roomID) {
@@ -56,20 +56,36 @@ export default function GameBoard({ playerID }: GemBoardProps) {
     ws.onmessage = function (event) {
       let msg = JSON.parse(event.data) as WebsocketResponse;
       console.log("msg", msg);
-      setGameState((prev) => {
-        const newGameState = { ...prev };
-        newGameState.developmentCards = [
-          ...msg.developmentTiles.level1,
-          ...msg.developmentTiles.level2,
-          ...msg.developmentTiles.level3,
-        ];
-        newGameState.playerTurn = msg.currentPlayerId;
-        newGameState.nobleTiles = msg.nobles;
-        newGameState.players = [...msg.players.filter((p) => p.id != playerID)];
-        newGameState.currentPlayer = msg.players.find((p) => p.id == playerID)!;
-        newGameState.gemTokens = msg.gems;
-        return newGameState;
-      });
+      if (!!msg.developmentTiles) {
+        const newGameState: GameState = {
+          ...gameState,
+          developmentCards: [
+            ...msg.developmentTiles.level1,
+            ...msg.developmentTiles.level2,
+            ...msg.developmentTiles.level3,
+          ],
+          playerTurn: msg.currentPlayerId,
+          nobleTiles: msg.nobles,
+          players: [...msg.players.filter((p) => p.id != playerID)],
+          currentPlayer: msg.players.find((p) => p.id == playerID)!,
+          gemTokens: msg.gems,
+        };
+        setGameState(newGameState);
+      }
+      // setGameState((prev) => {
+      //   const newGameState = { ...prev };
+      // newGameState.developmentCards = [
+      //   ...msg.developmentTiles.level1,
+      //   ...msg.developmentTiles.level2,
+      //   ...msg.developmentTiles.level3,
+      // ];
+      // newGameState.playerTurn = msg.currentPlayerId;
+      // newGameState.nobleTiles = msg.nobles;
+      // newGameState.players = [...msg.players.filter((p) => p.id != playerID)];
+      // newGameState.currentPlayer = msg.players.find((p) => p.id == playerID)!;
+      // newGameState.gemTokens = msg.gems;
+      // return newGameState;
+      // });
     };
     ws.onopen = function () {
       const message: WebsocketRequest = {
