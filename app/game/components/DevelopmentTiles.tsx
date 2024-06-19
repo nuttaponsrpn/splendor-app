@@ -148,13 +148,18 @@ const DevelopmentCardsContainer = styled(Box)`
   gap: 8px;
   padding: 6px;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    display: flex;
-    flex-direction: column;
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     border-radius: 8px;
     gap: 4px;
+    height: 106%;
+    width: 95%;
+    margin-right: 8px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
     height: 100%;
-    width: 55%;
+    width: 100%;
+    margin-right: 0px;
   }
 `;
 
@@ -177,6 +182,10 @@ const DevelopmentLevelWrapper = styled(Box)`
   font-family: "ui-monospace";
   letter-spacing: 0.5px;
   font-size: 30px;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    width: 60px;
+  }
 `;
 
 const DevelopmentCardDialog = styled(Box)`
@@ -205,7 +214,7 @@ export const BlankCard = styled(DevelopmentCardWrapper)<{
   border: 1px solid #ccc;
   border-radius: 8px;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     width: ${({ width }) => (width ? width : "100%")};
     height: ${({ height }) => (height ? height : "100%")};
     background-color: ${({ bgcolor }) => (bgcolor ? bgcolor : "inherit")};

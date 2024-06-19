@@ -185,8 +185,8 @@ const PlayerBoardBox = styled(Card)<{ name: string }>`
     );
     font-size: 1.2rem !important;
     background: linear-gradient(0deg, #f3c244 0%, #ffe37f 50%, #f9e496 100%);
-    width: 40%;
-    height: 25%;
+    width: 50%;
+    height: 35px;
     position: absolute;
     top: -6px;
     left: 0px;
@@ -218,6 +218,20 @@ const PlayerBoardBox = styled(Card)<{ name: string }>`
     z-index: 1;
     background-color: #cda077;
   }
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    &:before {
+      width: 250px;
+      height: 25px;
+    }
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    &:before {
+      width: 250px;
+      height: 35px;
+    }
+  }
 `;
 
 const PlayerBoardHeader = styled(Box)`
@@ -227,6 +241,17 @@ const PlayerBoardHeader = styled(Box)`
   display: flex;
   align-items: flex-end;
   justify-content: center;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    position: absolute;
+    padding-right: 40px;
+    top: 22px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    padding-right: 40px;
+    top: 32px;
+  }
 `;
 
 const PlayerCardBox = styled(Box)`
@@ -244,8 +269,8 @@ const PlayerCardWrapper = styled(Box)<{ gemtype: GemType }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  width: 38px;
+  height: 80%;
+  width: 32px;
   position: relative;
 
   .shadow {
@@ -283,6 +308,15 @@ const PlayerCardWrapper = styled(Box)<{ gemtype: GemType }>`
         #4f4444 150%
       );
     }
+  }
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 100%;
+    width: 28px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 75%;
   }
 `;
 
@@ -352,6 +386,14 @@ const PlayerToken = styled(Box)<{ points: string }>`
       ${({ points }) => (+points > 0 ? "#fff" : "#4f4444")} 150%
     ) !important;
   }
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 22px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 28px;
+  }
 `;
 
 const PurchaseButton = styled(Button)`
@@ -374,27 +416,6 @@ const IsValidSpan = styled("span")<{ valid: boolean; value: string }>`
   }
 `;
 
-const ReserveCardWrapper = styled(Box)<{ index: number }>`
-  position: absolute;
-  bottom: 5px;
-  right: calc(10px + ${({ index }) => reserveCardCss(index).right}px);
-  transform: rotate(${({ index }) => `${reserveCardCss(index).rotate}turn`});
-  z-index: ${({ index }) => reserveCardCss(index).zIndex};
-`;
-
-function reserveCardCss(idx: number) {
-  switch (idx) {
-    case 0:
-      return { rotate: "0.0", right: 7, zIndex: 2 };
-    case 1:
-      return { rotate: "-0.05", right: 15, zIndex: 1 };
-    case 2:
-      return { rotate: "0.05", right: 0, zIndex: 3 };
-    default:
-      return { rotate: "0.0", right: "", zIndex: "" };
-  }
-}
-
 const DevelopmentCardsDialog = styled(Box)`
   display: flex;
   gap: 12px;
@@ -416,12 +437,6 @@ const ReserveBox = styled(Box)`
   gap: 8px;
 `;
 
-const PurchaseAmount = styled(Box)`
-  position: absolute;
-  top: 5px;
-  right: 8px;
-`;
-
 const TokenWrapprer = styled(Box)`
   display: flex;
   height: 65px;
@@ -430,6 +445,15 @@ const TokenWrapprer = styled(Box)`
   align-items: center;
   position: relative;
   margin-left: auto;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 60px;
+    width: 200px;
+  }
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 65px;
+    width: 200px;
+  }
 `;
 
 const EndTurnWrapper = styled(Box)`
@@ -445,6 +469,17 @@ const PlayerPoints = styled(Box)`
   z-index: 3;
   font-size: 22px !important;
   position: absolute;
-  top: 0;
-  margin-right: 110px;
+  right: 200px;
+  top: 2px;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    position: relative;
+    right: 175px;
+    top: -6px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    right: 205px;
+    top: -10px;
+  }
 `;

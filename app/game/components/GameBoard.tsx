@@ -71,20 +71,6 @@ export default function GameBoard({ playerID }: GemBoardProps) {
         };
         setGameState(newGameState);
       }
-      // setGameState((prev) => {
-      //   const newGameState = { ...prev };
-      // newGameState.developmentCards = [
-      //   ...msg.developmentTiles.level1,
-      //   ...msg.developmentTiles.level2,
-      //   ...msg.developmentTiles.level3,
-      // ];
-      // newGameState.playerTurn = msg.currentPlayerId;
-      // newGameState.nobleTiles = msg.nobles;
-      // newGameState.players = [...msg.players.filter((p) => p.id != playerID)];
-      // newGameState.currentPlayer = msg.players.find((p) => p.id == playerID)!;
-      // newGameState.gemTokens = msg.gems;
-      // return newGameState;
-      // });
     };
     ws.onopen = function () {
       const message: WebsocketRequest = {
@@ -313,7 +299,7 @@ const GameBoardContainer = styled(Box)`
   background: -webkit-linear-gradient(0deg, #bc48ff 0%, #474bff 100%);
   background: linear-gradient(0deg, #bc48ff 0%, #474bff 100%);
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
@@ -325,6 +311,9 @@ const GameBoardContainer = styled(Box)`
     padding: 12px;
     padding-bottom: 0px;
     overflow: hidden;
+    max-width: 900px !important;
+    max-height: 600px;
+    position: relative;
   }
 `;
 
@@ -338,10 +327,25 @@ const OpponentBoardWrapper = styled("div")<{ playeramount: number }>`
       return playeramount > 2 ? "1" : "0 0 33%";
     }};
   }
-  ${({ theme }) => theme.breakpoints.up("md")} {
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    position: absolute;
+    left: 8px;
+    width: 20%;
+    height: calc(80% - 20px);
+
+    > div {
+      flex: 0 0 90px;
+    }
+  }
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    > div {
+      flex: 0 0 100px;
+    }
   }
 `;
 
@@ -351,25 +355,54 @@ const BoardBox = styled(Box)`
   justify-content: space-around;
   height: 70%;
 
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    width: 78%;
+    flex-direction: row-reverse;
+    gap: 4px;
+    height: 70%;
+    margin-left: auto;
+  }
+
   ${({ theme }) => theme.breakpoints.up("md")} {
-    width: 100%;
-    gap: 8px;
+    width: 78%;
+    height: 80%;
   }
 `;
 
 const GemsTokenWrapper = styled(Box)`
   height: 10%;
   width: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 100%;
+    width: 10%;
+  }
 `;
 
 const NobleTilesWrapper = styled(Box)`
   height: 13%;
   width: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 100%;
+    width: 16%;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 100%;
+    width: 20%;
+  }
 `;
 
 const DevelopmentTilesWrapper = styled(Box)`
   height: 70%;
   width: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 `;
 
 const PlayerBox = styled(Box)`
@@ -377,9 +410,13 @@ const PlayerBox = styled(Box)`
   flex-direction: row;
   height: 20%;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     gap: 8px;
-    height: 20%;
+    height: 25%;
     width: 100%;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 20%;
   }
 `;

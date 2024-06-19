@@ -161,7 +161,7 @@ const HeaderPage = styled("div")`
   width: 100%;
   flex-direction: column;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     flex-direction: row;
   }
 `;
@@ -171,7 +171,7 @@ const LogoGame = styled("h1")``;
 const PlayerName = styled("h1")`
   position: relative;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
+  ${({ theme }) => theme.breakpoints.up("sm")} {
     position: absolute;
     right: 0;
     font-size: 18px;

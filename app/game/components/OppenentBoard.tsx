@@ -34,6 +34,10 @@ const OpponentBoard: FC<OpponentBoardProps> = ({ player }) => {
           </OpponentCardWrapper>
         ))}
       </OpponentAssetBox>
+      <OpponentPoints
+        className="text-shadow"
+        points={player.points.toString()}
+      />
     </OpponentBoardBox>
   );
 };
@@ -109,7 +113,7 @@ const OpponentAssetBox = styled(Box)`
   gap: 1px;
   width: 100%;
   height: 100%;
-  padding: 13% 8% 8% 8%;
+  padding: 13% 8% 4% 8%;
 `;
 
 const OpponentCardWrapper = styled(Box)<{ gemtype: GemType }>`
@@ -119,7 +123,7 @@ const OpponentCardWrapper = styled(Box)<{ gemtype: GemType }>`
   justify-content: center;
   height: 100%;
   width: 100%;
-  gap: 1px;
+  gap: 2px;
 
   .shadow {
     background-color: ${({ gemtype }) => GemColors[gemtype]};
@@ -161,7 +165,7 @@ const OpponentCardWrapper = styled(Box)<{ gemtype: GemType }>`
 
 const OpponentCard = styled(Box)<{ points: string }>`
   width: 100%;
-  height: 40%;
+  height: 45%;
   background-color: ${({ points }) =>
     +points > 0 ? "" : "transparent !important"};
   border: solid 1px #fff;
@@ -221,5 +225,30 @@ const OpponentToken = styled(Box)<{ points: string }>`
       transparent 50%,
       ${({ points }) => (+points > 0 ? "#fff" : "#4f4444")} 150%
     ) !important;
+  }
+`;
+
+const OpponentPoints = styled(Box)<{ points: string }>`
+  position: absolute;
+  top: -8px;
+  right: 18px;
+  z-index: 4;
+
+  &:after {
+    font-size: 25px !important;
+    content: ${({ points }) => `"${points}"`};
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: #f5d9c0;
+    padding-bottom: 2px;
+    aspect-ratio: 1/1;
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px,
+      rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px,
+      rgba(0, 0, 0, 0.07) 0px 16px 16px;
   }
 `;
