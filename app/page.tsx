@@ -44,7 +44,7 @@ export default function Home() {
     });
 
     const ws = new WebSocket(
-      `ws://go-splendor-purple-resonance-4326.fly.dev/ws/displayrooms`
+      `wss://go-splendor-purple-resonance-4326.fly.dev/ws/displayrooms`
     );
 
     ws.onmessage = function (event) {
