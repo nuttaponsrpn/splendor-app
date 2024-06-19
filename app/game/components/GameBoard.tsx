@@ -55,7 +55,6 @@ export default function GameBoard({ playerID }: GemBoardProps) {
 
     ws.onmessage = function (event) {
       let msg = JSON.parse(event.data) as WebsocketResponse;
-      console.log("msg", msg);
       if (!!msg.developmentTiles) {
         const newGameState: GameState = {
           ...gameState,

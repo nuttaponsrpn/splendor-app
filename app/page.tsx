@@ -39,7 +39,6 @@ export default function Home() {
     initPlayerID();
     window.addEventListener("beforeunload", (e) => {
       const val = [{ roomID: "close", palyers: 0 }];
-      console.log("beforeunload", val);
       ws.send(JSON.stringify(val));
     });
 
@@ -49,7 +48,6 @@ export default function Home() {
 
     ws.onmessage = function (event) {
       let rooms = (JSON.parse(event.data) as DisplayRooms[]) || [];
-      console.log("rooms", rooms);
       setDisplayRooms(rooms);
     };
   }, []);

@@ -10,7 +10,6 @@ export default function GamePage() {
 
   useEffect(() => {
     const getPlayerID = localStorage.getItem("playerID");
-    console.log("getPlayerID", getPlayerID);
     if (!getPlayerID) {
       router.push("/");
     } else {
