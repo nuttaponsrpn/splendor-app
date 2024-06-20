@@ -41,7 +41,7 @@ export default function GameBoard({ playerID }: GemBoardProps) {
     }
 
     const ws = new WebSocket(
-      `wss://go-splendor-purple-resonance-4326.fly.dev/ws?room_id=${roomID}&playerID=${playerID}`
+      `${process.env.NEXT_PUBLIC_SERVER_PATH}/ws?room_id=${roomID}&playerID=${playerID}`
     );
     window.addEventListener("beforeunload", (e) => {
       if (!!roomID) {
@@ -417,6 +417,6 @@ const PlayerBox = styled(Box)`
   }
 
   ${({ theme }) => theme.breakpoints.up("md")} {
-    height: 20%;
+    height: 30%;
   }
 `;

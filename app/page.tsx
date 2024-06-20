@@ -43,7 +43,7 @@ export default function Home() {
     });
 
     const ws = new WebSocket(
-      `wss://go-splendor-purple-resonance-4326.fly.dev/ws/displayrooms`
+      `${process.env.NEXT_PUBLIC_SERVER_PATH}/ws/displayrooms`
     );
 
     ws.onmessage = function (event) {
@@ -77,7 +77,7 @@ export default function Home() {
     <PageContainer>
       <CssBaseline />
       <HeaderPage>
-        <LogoGame>Splendor Game</LogoGame>
+        <LogoGame>Splendor</LogoGame>
         <PlayerName>Player: {playerID}</PlayerName>
       </HeaderPage>
       <TableContainer component={Paper}>

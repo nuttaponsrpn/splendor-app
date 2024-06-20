@@ -67,11 +67,16 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
   }
 
   return (
-    <PlayerBoardBox name={player.id ? player.id : ""}>
-      <PlayerPoints className="player-points text-shadow">
-        {player.points}
-      </PlayerPoints>
-      <PlayerBoardHeader>
+    <PlayerBoardBox>
+      <PlayerHeader>
+        <PlayerName className="player-points text-shadow">
+          {player.id ? player.id : ""}
+        </PlayerName>
+        <PlayerPoints className="player-points text-shadow">
+          {player.points}
+        </PlayerPoints>
+      </PlayerHeader>
+      <PlayerSelectedGems>
         {/* Player Gem */}
         <TokenWrapprer>
           {selectedGem.map((gem, index) => (
@@ -82,7 +87,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
             />
           ))}
         </TokenWrapprer>
-      </PlayerBoardHeader>
+      </PlayerSelectedGems>
 
       {/* Player Card */}
       <PlayerCardBox>
@@ -152,7 +157,7 @@ const PlayerBoard: FC<PlayerBoardProps> = ({
 
 export default PlayerBoard;
 
-const PlayerBoardBox = styled(Card)<{ name: string }>`
+const PlayerBoardBox = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -172,39 +177,6 @@ const PlayerBoardBox = styled(Card)<{ name: string }>`
     #e8a000 150%
   );
   background: radial-gradient(circle, #fdfdfd 0%, #fffcd6 50%, #e8a000 150%);
-
-  &:before {
-    content: ${({ name }) => `"${name}"`};
-    width: 80%;
-    background: #f3c244;
-    background: -webkit-linear-gradient(
-      0deg,
-      #f3c244 0%,
-      #ffe37f 50%,
-      #f9e496 100%
-    );
-    font-size: 1.2rem !important;
-    background: linear-gradient(0deg, #f3c244 0%, #ffe37f 50%, #f9e496 100%);
-    width: 50%;
-    height: 35px;
-    position: absolute;
-    top: -6px;
-    left: 0px;
-    z-index: 3;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    -webkit-box-shadow: 0 0 2px 1px #fef8d1;
-    -moz-box-shadow: 0 0 2px 1px #fef8d1;
-    box-shadow: 0 0 2px 1px #fef8d1;
-    display: flex;
-    font-weight: bolder;
-    padding-left: 8px;
-    align-items: center;
-    font-size: xx-small;
-    padding-bottom: 3px;
-  }
 
   &:after {
     content: " ";
@@ -234,7 +206,40 @@ const PlayerBoardBox = styled(Card)<{ name: string }>`
   }
 `;
 
-const PlayerBoardHeader = styled(Box)`
+const PlayerHeader = styled(Box)`
+  width: 80%;
+  background: #f3c244;
+  background: -webkit-linear-gradient(
+    0deg,
+    #f3c244 0%,
+    #ffe37f 50%,
+    #f9e496 100%
+  );
+  font-size: 1.2rem !important;
+  background: linear-gradient(0deg, #f3c244 0%, #ffe37f 50%, #f9e496 100%);
+  width: 50%;
+  height: 35px;
+  position: absolute;
+  top: -6px;
+  left: 0px;
+  z-index: 2;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  -webkit-box-shadow: 0 0 2px 1px #fef8d1;
+  -moz-box-shadow: 0 0 2px 1px #fef8d1;
+  box-shadow: 0 0 2px 1px #fef8d1;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bolder;
+  padding-left: 8px;
+  align-items: center;
+  font-size: xx-small;
+  padding-bottom: 3px;
+`;
+
+const PlayerSelectedGems = styled(Box)`
   width: 100%;
   margin-top: auto;
   flex: 1;
@@ -262,6 +267,14 @@ const PlayerCardBox = styled(Box)`
 
   height: 50px;
   width: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    padding-top: 14px;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    padding-top: 0px;
+  }
 `;
 
 const PlayerCardWrapper = styled(Box)<{ gemtype: GemType }>`
@@ -465,21 +478,21 @@ const EndTurnWrapper = styled(Box)`
   z-index: 2;
 `;
 
-const PlayerPoints = styled(Box)`
+const PlayerName = styled(Box)`
   z-index: 3;
   font-size: 22px !important;
-  position: absolute;
-  right: 200px;
-  top: 2px;
 
   ${({ theme }) => theme.breakpoints.up("sm")} {
-    position: relative;
-    right: 175px;
-    top: -6px;
+    font-size: 20px;
   }
 
   ${({ theme }) => theme.breakpoints.up("md")} {
-    right: 205px;
-    top: -10px;
+    font-size: 30px;
   }
+`;
+
+const PlayerPoints = styled(Box)`
+  z-index: 3;
+  font-size: 22px !important;
+  padding-right: 10px;
 `;
