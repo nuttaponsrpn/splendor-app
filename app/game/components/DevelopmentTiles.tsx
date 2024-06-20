@@ -4,6 +4,7 @@ import { Player } from "./PlayerBoard";
 import { Box, Button, Dialog, styled } from "@mui/material";
 
 interface DevelopmentTilesProps {
+  isPlayerTurn: boolean;
   player: Player;
   developmentCards: DevelopmentCard[];
   onCardReserve: (card: DevelopmentCard) => void;
@@ -18,6 +19,7 @@ interface CardLevelSectionProps {
 }
 
 const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
+  isPlayerTurn,
   player,
   developmentCards,
   onCardReserve,
@@ -27,7 +29,7 @@ const DevelopmentTiles: FC<DevelopmentTilesProps> = ({
   const level1 = developmentCards.filter(({ level }) => level === 1);
   const level2 = developmentCards.filter(({ level }) => level === 2);
   const level3 = developmentCards.filter(({ level }) => level === 3);
-  const isDisplayReserveCard = player.reservedCards.length < 3;
+  const isDisplayReserveCard = isPlayerTurn && player.reservedCards.length < 3;
   const [selectCard, setSelectCard] = useState<DevelopmentCard>();
 
   function clearSelectCard() {

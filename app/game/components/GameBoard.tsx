@@ -94,7 +94,7 @@ export default function GameBoard({ playerID }: GemBoardProps) {
     const newGem = [...selectedGem, gem];
 
     if (selectedGem.length < 3) {
-      const isGemLimit = gemTokens[gem] < initialGameState.gemTokens[gem] - 1;
+      const isGemLimit = gemTokens[gem] <= initialGameState.gemTokens[gem] - 2;
       const isDoubleGemselect = selectedGem.includes(gem) && isGemLimit;
       const isJoker = gem === "joker";
       const isDuplicate =
@@ -264,6 +264,7 @@ export default function GameBoard({ playerID }: GemBoardProps) {
 
         <DevelopmentTilesWrapper className="development-tiles-wrapper">
           <DevelopmentTiles
+            isPlayerTurn={validateIsPlayerTurn()}
             player={gameState.currentPlayer}
             developmentCards={gameState.developmentCards}
             onCardReserve={handleCardReserve}

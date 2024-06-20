@@ -365,7 +365,7 @@ const PlayerCard = styled(Box)<{ points: string }>`
 `;
 
 const PlayerToken = styled(Box)<{ points: string }>`
-  height: 28px;
+  height: 22px;
   aspect-ratio: 1/1;
   position: absolute !important;
   right: -11px !important;
@@ -399,14 +399,6 @@ const PlayerToken = styled(Box)<{ points: string }>`
       ${({ points }) => (+points > 0 ? "#fff" : "#4f4444")} 150%
     ) !important;
   }
-
-  ${({ theme }) => theme.breakpoints.up("sm")} {
-    height: 22px;
-  }
-
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    height: 28px;
-  }
 `;
 
 const PurchaseButton = styled(Button)`
@@ -437,6 +429,11 @@ const DevelopmentCardsDialog = styled(Box)`
 const DevelopmentCardsWrapper = styled(Box)`
   height: 150px;
   width: 100px;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    height: 200px;
+    width: 140px;
+  }
 `;
 
 const ReservePaperDialog = styled(Box)`
